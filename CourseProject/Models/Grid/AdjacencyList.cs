@@ -1,15 +1,10 @@
-﻿using System.Net;
-using System.Xml.Linq;
-
-namespace CourseProject.Models;
+﻿namespace CourseProject.Models.Grid;
 
 public class AdjacencyList
 {
     public List<SortedSet<int>> List { get; set; }
 
     private readonly Grid _grid;
-
-    private const double Eps = 1.0e-16;
 
     public AdjacencyList(Grid grid)
     {

@@ -1,14 +1,14 @@
-﻿using CourseProject.Models;
+﻿using CourseProject.Models.Grid;
 
-namespace CourseProject.Tools;
+namespace CourseProject.Tools.Providers;
 
-public class RightPartProvider
+public class FProvider
 {
     private readonly Func<double, double, double> _f;
 
     private readonly Grid _grid;
 
-    public RightPartProvider(Grid grid, Func<double, double, double> f)
+    public FProvider(Grid grid, Func<double, double, double> f)
     {
         _grid = grid;
         _f = f;

@@ -1,5 +1,7 @@
 ﻿using CourseProject.Models;
+using CourseProject.Models.Grid;
 using CourseProject.Tools;
+using CourseProject.Tools.Providers;
 
 namespace CourseProject.Factories;
 
@@ -12,12 +14,14 @@ public class GridFactory
         _gridComponentsProvider=gridComponentsProvider;
     }
 
-    public Grid CreateGrid(Node[] cornerNodes, int numberByWidth, int numberByHeight)
+    public Grid CreateGrid(Node[] cornerNodes, double width, double height, int numberByWidth, int numberByHeight)
     {
         var grid = new Grid(
-            _gridComponentsProvider.CreateNodes(cornerNodes, numberByWidth, numberByHeight),
-            _gridComponentsProvider.CreateElements(cornerNodes, numberByWidth, numberByHeight),
+            _gridComponentsProvider.CreateNodes(cornerNodes, width, height, numberByWidth, numberByHeight),
+            _gridComponentsProvider.CreateElements(cornerNodes, width, height, numberByWidth, numberByHeight),
             cornerNodes,
+            width,
+            height,
             numberByWidth,
             numberByHeight);
 

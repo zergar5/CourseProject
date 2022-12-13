@@ -1,7 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-using CourseProject.Models;
-
-namespace CourseProject.Tools;
+﻿namespace CourseProject.Tools.Providers;
 
 public class LinearFunctionsProvider
 {

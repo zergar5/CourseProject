@@ -1,4 +1,5 @@
 ﻿using CourseProject.Models;
+using CourseProject.Models.Grid;
 
 namespace CourseProject.IO;
 
@@ -13,29 +14,24 @@ public class GridIO
         _path = path;
     }
 
-    public Node[] ReadCoordinateFromConsole()
+    public void ReadCoordinateFromConsole(out Node[] cornerNodes, out double width, out double height)
     {
         Console.WriteLine("Input grid coordinate");
-        var cornerNodes = new Node[4];
+        cornerNodes = new Node[2];
 
         Console.Write("Input bottom left point: ");
         var point = Console.ReadLine().Split(" ").Select(double.Parse).ToArray();
         cornerNodes[0] = new Node(point[0], point[1]);
 
-        Console.Write("Input bottom right point: ");
+        Console.Write("Input upper right point: ");
         point = Console.ReadLine().Split(" ").Select(double.Parse).ToArray();
         cornerNodes[1] = new Node(point[0], point[1]);
 
-        Console.Write("Input upper left point: ");
-        point = Console.ReadLine().Split(" ").Select(double.Parse).ToArray();
-        cornerNodes[2] = new Node(point[0], point[1]);
+        Console.Write("Input width of grid: ");
+        width = double.Parse(Console.ReadLine());
 
-        Console.Write("Input upper right point: ");
-        point = Console.ReadLine().Split(" ").Select(double.Parse).ToArray();
-        cornerNodes[3] = new Node(point[0], point[1]);
-
-        return cornerNodes;
-        
+        Console.Write("Input height of grid: ");
+        height = double.Parse(Console.ReadLine());
     }
 
     public void ReadSizesFromConsole(out int numberByWidth, out int numberByHeight)

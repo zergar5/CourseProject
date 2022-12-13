@@ -1,7 +1,10 @@
 ﻿using CourseProject.Factories;
 using CourseProject.IO;
 using CourseProject.Models;
+using CourseProject.Models.GlobalParts;
+using CourseProject.Models.Grid;
 using CourseProject.Tools;
+using CourseProject.Tools.Providers;
 
 var gridI = new GridIO();
 var cornerNodes = gridI.ReadCoordinateFromConsole();
