@@ -1,4 +1,4 @@
-﻿using CourseProject.Models;
+﻿using CourseProject.Factories;
 using CourseProject.Models.Grid;
 using CourseProject.Models.LocalParts;
 
@@ -6,10 +6,10 @@ namespace CourseProject.Tools.Providers;
 
 public class GridComponentsProvider
 {
-    private readonly MaterialProvider _materialProvider;
+    private readonly MaterialFactory _materialProvider;
     private readonly LinearFunctionsProvider _linearFunctionsProvider;
 
-    public GridComponentsProvider(MaterialProvider materialProvider, LinearFunctionsProvider linearFunctionsProvider)
+    public GridComponentsProvider(MaterialFactory materialProvider, LinearFunctionsProvider linearFunctionsProvider)
     {
         _materialProvider = materialProvider;
         _linearFunctionsProvider = linearFunctionsProvider;

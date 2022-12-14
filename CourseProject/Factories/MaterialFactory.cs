@@ -1,16 +1,13 @@
-﻿using System;
-using System.Linq;
-using System.Reflection;
-using CourseProject.Models.Grid;
+﻿using CourseProject.Models.Grid;
 
-namespace CourseProject.Tools.Providers;
+namespace CourseProject.Factories;
 
-public class MaterialProvider
+public class MaterialFactory
 {
     private readonly Dictionary<int, double[]> _lambdasData;
     private readonly Dictionary<int, double> _gammasData;
 
-    public MaterialProvider(IEnumerable<double[]> lambdas, IEnumerable<double> gammas)
+    public MaterialFactory(IEnumerable<double[]> lambdas, IEnumerable<double> gammas)
     {
         _lambdasData = lambdas.Select((value, index) => new KeyValuePair<int, double[]>(index, value))
             .ToDictionary(index => index.Key, value => value.Value);

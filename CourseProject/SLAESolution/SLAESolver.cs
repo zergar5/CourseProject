@@ -1,6 +1,6 @@
 ﻿using CourseProject.Models.GlobalParts;
 
-namespace CourseProject.SLAESolve;
+namespace CourseProject.SLAESolution;
 
 public class SLAESolver
 {

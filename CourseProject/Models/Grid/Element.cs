@@ -1,5 +1,4 @@
 ﻿using CourseProject.Models.LocalParts;
-using CourseProject.Tools;
 using CourseProject.Tools.Calculators;
 using CourseProject.Tools.Providers;
 
@@ -40,7 +39,7 @@ public class Element
                 StiffnessMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(rUpperLimit, rDownLimit, zUpperLimit,
                         zDownLimit, LocalBasisFunctions[i],
-                        LocalBasisFunctions[j], Material.Lamdas[0]);
+                        LocalBasisFunctions[j], Material.Lambdas[0]);
             }
         }
     }

@@ -19,7 +19,7 @@ public class AdjacencyList
 
         for (var i = 0; i < _grid.Nodes.Length; i++)
         {
-            List.Add( new SortedSet<int>());
+            List.Add(new SortedSet<int>());
         }
 
         foreach (var element in elements)

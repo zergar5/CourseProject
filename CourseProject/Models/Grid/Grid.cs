@@ -8,7 +8,7 @@ public class Grid
     public double Width { get; set; }
     public double Height { get; set; }
     public int NumberByWidth { get; set; }
-    public int NumberByHeight { get; set;}
+    public int NumberByHeight { get; set; }
 
     public Grid(Node[] nodes, Element[] elements, Node[] cornerNodes, double width, double height, int numberByWidth, int numberByHeight)
     {

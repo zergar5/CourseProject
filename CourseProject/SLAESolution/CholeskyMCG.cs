@@ -2,7 +2,7 @@
 using CourseProject.Tools;
 using CourseProject.Tools.Calculators;
 
-namespace CourseProject.SLAESolve;
+namespace CourseProject.SLAESolution;
 
 public class CholeskyMCG
 {
@@ -24,12 +24,13 @@ public class CholeskyMCG
     private GlobalVector IterationProcess(GlobalMatrix globalMatrix, GlobalVector x0, GlobalVector b, double eps, int maxIter,
         GlobalVector r0, GlobalVector z0)
     {
-        Console.WriteLine("MCG");
         var x = x0;
         var r = r0;
         var z = z0;
+
         var bNorm = b.CalcNorm();
         var residual = r.CalcNorm() / bNorm;
+
         for (var i = 1; i <= maxIter && residual > eps; i++)
         {
             var Mr = SLAESolver.SolveSLAE(_choleskyGlobalMatrix, r);

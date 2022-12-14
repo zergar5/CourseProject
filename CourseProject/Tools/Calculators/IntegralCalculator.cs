@@ -1,5 +1,4 @@
-﻿using CourseProject.Models;
-using CourseProject.Models.LocalParts;
+﻿using CourseProject.Models.LocalParts;
 
 namespace CourseProject.Tools.Calculators;
 
@@ -13,6 +12,7 @@ public class IntegralCalculator
     {
         var hz = zUpperLimit - zDownLimit;
         var hr = rUpperLimit - rDownLimit;
+
         var firstIntegralValue = 0.0;
         for (var i = 0; i < 2; i++)
         {
@@ -38,6 +38,7 @@ public class IntegralCalculator
     {
         var hz = zUpperLimit - zDownLimit;
         var hr = rUpperLimit - rDownLimit;
+
         var firstIntegralValue = 0.0;
         for (var i = 0; i < 2; i++)
         {

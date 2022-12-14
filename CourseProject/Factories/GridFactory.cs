@@ -1,6 +1,4 @@
-﻿using CourseProject.Models;
-using CourseProject.Models.Grid;
-using CourseProject.Tools;
+﻿using CourseProject.Models.Grid;
 using CourseProject.Tools.Providers;
 
 namespace CourseProject.Factories;

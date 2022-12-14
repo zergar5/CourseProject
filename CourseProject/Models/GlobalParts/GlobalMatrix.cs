@@ -11,10 +11,7 @@ public class GlobalMatrix
     public int[] JG { get; set; }
     public int[] IG { get; set; }
 
-    public GlobalMatrix()
-    {
-
-    }
+    public GlobalMatrix() { }
 
     public GlobalMatrix(AdjacencyList adjacencyList)
     {

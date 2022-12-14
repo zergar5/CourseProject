@@ -1,11 +1,15 @@
-﻿using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
+﻿using CourseProject.Models.LocalParts;
 
 namespace CourseProject.Models.GlobalParts;
 
 public class GlobalVector : LocalVector, ICloneable
 {
     public GlobalVector(int size) : base(size) { }
+
+    public GlobalVector(double[] vector)
+    {
+        VectorArray = vector;
+    }
 
     public static GlobalVector operator +(GlobalVector vector1, GlobalVector vector2)
     {
@@ -64,6 +68,7 @@ public class GlobalVector : LocalVector, ICloneable
     {
         var clone = new double[Count];
         Array.Copy(VectorArray, clone, Count);
+
         return new GlobalVector(Count)
         {
             VectorArray = clone

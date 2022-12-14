@@ -33,6 +33,7 @@ public class LocalMatrix
     public static LocalMatrix operator +(LocalMatrix matrix1, LocalMatrix matrix2)
     {
         var localMatrix = new LocalMatrix(matrix1.CountRows(), matrix1.CountColumns());
+
         if (matrix1.CountRows() != matrix2.CountRows() && matrix1.CountColumns() != matrix2.CountColumns())
         {
             throw new Exception("Can't sum matrix");

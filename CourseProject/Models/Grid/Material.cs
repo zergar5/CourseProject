@@ -3,13 +3,13 @@
 public class Material
 {
     public int Id { get; set; }
-    public double[] Lamdas { get; set; }
+    public double[] Lambdas { get; set; }
     public double Gamma { get; set; }
 
-    public Material(int id, double[] lamdas, double gamma)
+    public Material(int id, double[] lambdas, double gamma)
     {
         Id = id;
-        Lamdas = lamdas;
+        Lambdas = lambdas;
         Gamma = gamma;
     }
 }
