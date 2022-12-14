@@ -4,16 +4,16 @@ namespace CourseProject.Models.BoundaryConditions;
 
 public class ThirdBoundaryCondition
 {
-    public double[] Betas { get; set; }
+    public double Beta { get; set; }
     public double[] Us { get; set; }
     public int[] GlobalNodesNumbers { get; set; }
     public double H { get; set; }
 
     private const double Eps = 1.0e-16;
 
-    public ThirdBoundaryCondition(double[] betas, double[] us, int[] globalNodesNumbers, Node[] nodes)
+    public ThirdBoundaryCondition(double beta, double[] us, int[] globalNodesNumbers, Node[] nodes)
     {
-        Betas = betas;
+        Beta = beta;
         Us = us;
         GlobalNodesNumbers = globalNodesNumbers;
         H = Math.Abs(nodes[globalNodesNumbers[1]].R - nodes[globalNodesNumbers[0]].R) < Eps

@@ -40,7 +40,7 @@ public class Element
                 StiffnessMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(rUpperLimit, rDownLimit, zUpperLimit,
                         zDownLimit, LocalBasisFunctions[i],
-                        LocalBasisFunctions[j], 2.0);
+                        LocalBasisFunctions[j], Material.Lamdas[0]);
             }
         }
     }
@@ -61,7 +61,7 @@ public class Element
                 MassMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForMassMatrix(rUpperLimit, rDownLimit, zUpperLimit,
                         zDownLimit, LocalBasisFunctions[i],
-                        LocalBasisFunctions[j], 2.0);
+                        LocalBasisFunctions[j]);
             }
         }
     }

@@ -1,4 +1,5 @@
 ﻿using CourseProject.Models;
+using CourseProject.Models.LocalParts;
 
 namespace CourseProject.Tools.Calculators;
 
@@ -33,7 +34,7 @@ public class IntegralCalculator
         return lambda * secondIntegralValue;
     }
 
-    public static double CalcDoubleIntegralForMassMatrix(double rUpperLimit, double rDownLimit, double zUpperLimit, double zDownLimit, LocalBasisFunction PsiI, LocalBasisFunction PsiJ, double gamma)
+    public static double CalcDoubleIntegralForMassMatrix(double rUpperLimit, double rDownLimit, double zUpperLimit, double zDownLimit, LocalBasisFunction PsiI, LocalBasisFunction PsiJ)
     {
         var hz = zUpperLimit - zDownLimit;
         var hr = rUpperLimit - rDownLimit;

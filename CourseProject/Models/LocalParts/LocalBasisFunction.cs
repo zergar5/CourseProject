@@ -1,4 +1,4 @@
-﻿namespace CourseProject.Models;
+﻿namespace CourseProject.Models.LocalParts;
 
 public class LocalBasisFunction
 {

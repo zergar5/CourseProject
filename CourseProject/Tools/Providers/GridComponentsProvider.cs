@@ -1,5 +1,6 @@
 ﻿using CourseProject.Models;
 using CourseProject.Models.Grid;
+using CourseProject.Models.LocalParts;
 
 namespace CourseProject.Tools.Providers;
 

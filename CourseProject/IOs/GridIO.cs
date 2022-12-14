@@ -14,7 +14,7 @@ public class GridIO
         _path = path;
     }
 
-    public void ReadCoordinateFromConsole(out Node[] cornerNodes, out double width, out double height)
+    public void ReadParametersFromConsole(out Node[] cornerNodes, out double width, out double height, out int numberByWidth, out int numberByHeight)
     {
         Console.WriteLine("Input grid coordinate");
         cornerNodes = new Node[2];
@@ -32,13 +32,25 @@ public class GridIO
 
         Console.Write("Input height of grid: ");
         height = double.Parse(Console.ReadLine());
-    }
 
-    public void ReadSizesFromConsole(out int numberByWidth, out int numberByHeight)
-    {
         Console.Write("Input number by width: ");
         numberByWidth = int.Parse(Console.ReadLine());
         Console.Write("Input number by height: ");
         numberByHeight = int.Parse(Console.ReadLine());
+    }
+
+    public void ReadParametersFromFile()
+    {
+        
+    }
+
+    public void ReadGridFromFile()
+    {
+
+    }
+
+    public void WriteGridToFile()
+    {
+
     }
 }

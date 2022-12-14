@@ -10,6 +10,7 @@
   <ItemGroup>
     <Folder Include="Factories\" />
     <Folder Include="Tools\Calculators\" />
+    <Folder Include="SLAESolution\" />
   </ItemGroup>
 
 </Project>

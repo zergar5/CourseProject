@@ -30,10 +30,22 @@ public class LocalVector
 
         for (var i = 0; i < vector1.Count; i++)
         {
-            sumOfVector[i] += vector1[i] + vector2[i];
+            sumOfVector[i] = vector1[i] + vector2[i];
         }
 
         return sumOfVector;
+    }
+
+    public static LocalVector operator *(LocalVector localVector, double coefficient)
+    {
+        var vector = new LocalVector(localVector.Count);
+
+        for (var i = 0; i < vector.Count; i++)
+        {
+            vector[i] = coefficient * localVector[i];
+        }
+
+        return vector;
     }
 
     public IEnumerator<double> GetEnumerator() => (IEnumerator<double>)VectorArray.GetEnumerator();
