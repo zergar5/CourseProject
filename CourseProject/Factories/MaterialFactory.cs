@@ -4,19 +4,19 @@ namespace CourseProject.Factories;
 
 public class MaterialFactory
 {
-    private readonly Dictionary<int, double[]> _lambdasData;
-    private readonly Dictionary<int, double> _gammasData;
+    public readonly Dictionary<int, double[]> LambdasData;
+    public readonly Dictionary<int, double> GammasData;
 
     public MaterialFactory(IEnumerable<double[]> lambdas, IEnumerable<double> gammas)
     {
-        _lambdasData = lambdas.Select((value, index) => new KeyValuePair<int, double[]>(index, value))
+        LambdasData = lambdas.Select((value, index) => new KeyValuePair<int, double[]>(index, value))
             .ToDictionary(index => index.Key, value => value.Value);
-        _gammasData = gammas.Select((value, index) => new KeyValuePair<int, double>(index, value)).ToDictionary(index => index.Key, value => value.Value);
+        GammasData = gammas.Select((value, index) => new KeyValuePair<int, double>(index, value)).ToDictionary(index => index.Key, value => value.Value);
     }
 
-    public Material CreateMaterial(int index)
+    public Material CreateMaterial(int id)
     {
-        var material = new Material(index, _lambdasData[index], _gammasData[index]);
+        var material = new Material(id, LambdasData[id], GammasData[id]);
 
         return material;
     }

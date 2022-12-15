@@ -4,7 +4,7 @@ using CourseProject.Tools.Providers;
 
 namespace CourseProject.Models.Grid;
 
-public class Element
+public class Element : IEquatable<Element>
 {
     public Node[] Nodes { get; set; }
     public int[] GlobalNodesNumbers { get; set; }
@@ -65,7 +65,7 @@ public class Element
         }
     }
 
-    public void CalcRightPart(FProvider rightPartProvider)
+    public void CalcRightPart(PComponentsProvider rightPartProvider)
     {
         var rightPart = new LocalVector(Nodes.Length);
 
@@ -80,5 +80,11 @@ public class Element
     public void CalcAMatrix()
     {
         LocalMatrixA = StiffnessMatrix + MassMatrix * Material.Gamma;
+    }
+
+    public bool Equals(Element? other)
+    {
+        return Nodes.SequenceEqual(other.Nodes) && GlobalNodesNumbers.SequenceEqual(other.GlobalNodesNumbers) &&
+               Material.Equals(other.Material);
     }
 }

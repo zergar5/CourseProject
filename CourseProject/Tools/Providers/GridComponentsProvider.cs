@@ -6,17 +6,21 @@ namespace CourseProject.Tools.Providers;
 
 public class GridComponentsProvider
 {
-    private readonly MaterialFactory _materialProvider;
+    private readonly MaterialFactory _materialFactory;
     private readonly LinearFunctionsProvider _linearFunctionsProvider;
 
-    public GridComponentsProvider(MaterialFactory materialProvider, LinearFunctionsProvider linearFunctionsProvider)
+    public GridComponentsProvider(MaterialFactory materialFactory, LinearFunctionsProvider linearFunctionsProvider)
     {
-        _materialProvider = materialProvider;
+        _materialFactory = materialFactory;
         _linearFunctionsProvider = linearFunctionsProvider;
     }
-    public Element[] CreateElements(Node[] cornerNodes, double width, double height, int numberByWidth, int numberByHeight)
+
+    public Element[] CreateElements(Node[] cornerNodes, int numberByWidth, int numberByHeight)
     {
         var elements = new Element[numberByWidth * numberByHeight];
+
+        var width = cornerNodes[1].R - cornerNodes[0].R;
+        var height = cornerNodes[1].Z - cornerNodes[0].Z;
 
         var elementWidth = width / numberByWidth;
         var elementHeight = height / numberByHeight;
@@ -39,7 +43,7 @@ public class GridComponentsProvider
                     (i + 1) * (numberByWidth + 1) + j,
                     (i + 1) * (numberByWidth + 1) + j + 1
                 };
-                var material = _materialProvider.CreateMaterial(0);
+                var material = _materialFactory.CreateMaterial(0);
 
                 var localBasisFunctions = new LocalBasisFunction[]
                 {
@@ -62,9 +66,12 @@ public class GridComponentsProvider
         return elements;
     }
 
-    public Node[] CreateNodes(Node[] cornerNodes, double width, double height, int numberByWidth, int numberByHeight)
+    public Node[] CreateNodes(Node[] cornerNodes, int numberByWidth, int numberByHeight)
     {
         var nodes = new Node[(numberByWidth + 1) * (numberByHeight + 1)];
+
+        var width = cornerNodes[1].R - cornerNodes[0].R;
+        var height = cornerNodes[1].Z - cornerNodes[0].Z;
 
         var elementWidth = width / numberByWidth;
         var elementHeight = height / numberByHeight;

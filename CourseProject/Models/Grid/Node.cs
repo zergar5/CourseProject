@@ -1,6 +1,6 @@
 ﻿namespace CourseProject.Models.Grid;
 
-public class Node
+public class Node : IEquatable<Node>
 {
     public double R { get; set; }
     public double Z { get; set; }
@@ -9,5 +9,10 @@ public class Node
     {
         R = r;
         Z = z;
+    }
+
+    public bool Equals(Node? other)
+    {
+        return R.Equals(other.R) && Z.Equals(other.Z);
     }
 }

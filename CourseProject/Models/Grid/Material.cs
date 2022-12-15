@@ -1,6 +1,6 @@
 ﻿namespace CourseProject.Models.Grid;
 
-public class Material
+public class Material : IEquatable<Material>
 {
     public int Id { get; set; }
     public double[] Lambdas { get; set; }
@@ -11,5 +11,10 @@ public class Material
         Id = id;
         Lambdas = lambdas;
         Gamma = gamma;
+    }
+
+    public bool Equals(Material? other)
+    {
+        return Id.Equals(other.Id) && Lambdas.SequenceEqual(other.Lambdas) && Gamma.Equals(other.Gamma);
     }
 }

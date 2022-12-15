@@ -1,4 +1,6 @@
-﻿namespace CourseProject.Models.LocalParts;
+﻿using System.Numerics;
+
+namespace CourseProject.Models.LocalParts;
 
 public class LocalMatrix
 {
@@ -12,6 +14,11 @@ public class LocalMatrix
     public LocalMatrix(int n, int m)
     {
         Matrix = new double[n, m];
+    }
+
+    public LocalMatrix(double[,] matrix)
+    {
+        Matrix = matrix;
     }
 
     public double this[int i, int j]
@@ -69,11 +76,16 @@ public class LocalMatrix
     {
         var localVector = new LocalVector(vector.Count);
 
+        if (matrix.CountRows() != vector.Count)
+        {
+            throw new Exception("Can't sum matrix");
+        }
+
         for (var i = 0; i < matrix.CountRows(); i++)
         {
             for (var j = 0; j < matrix.CountColumns(); j++)
             {
-                localVector[i] = matrix[i, j] * vector[j];
+                localVector[i] += matrix[i, j] * vector[j];
             }
         }
 

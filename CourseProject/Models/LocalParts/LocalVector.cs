@@ -14,6 +14,11 @@ public class LocalVector
         VectorArray = new double[size];
     }
 
+    public LocalVector(double[] vectorArray)
+    {
+        VectorArray = vectorArray;
+    }
+
     public double this[int index]
     {
         get => VectorArray[index];
