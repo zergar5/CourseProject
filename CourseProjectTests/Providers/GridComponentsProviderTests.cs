@@ -3,7 +3,7 @@ using CourseProject.Models.Grid;
 using CourseProject.Models.LocalParts;
 using CourseProject.Tools.Providers;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Providers;
 
 public class GridComponentsProviderTests
 {

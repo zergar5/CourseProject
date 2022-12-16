@@ -1,10 +1,6 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
-using CourseProject.Tools;
-using CourseProject.Tools.Providers;
+﻿using CourseProject.Models.LocalParts;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Models.LocalParts;
 
 public class LocalVectorTests
 {

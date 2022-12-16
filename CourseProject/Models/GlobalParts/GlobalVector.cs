@@ -61,7 +61,7 @@ public class GlobalVector : LocalVector, ICloneable
 
     public double CalcNorm()
     {
-        return VectorArray.Sum(element => element * element);
+        return Math.Sqrt(VectorArray.Sum(element => element * element));
     }
 
     public object Clone()

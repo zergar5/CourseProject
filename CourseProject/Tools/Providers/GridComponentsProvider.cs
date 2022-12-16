@@ -49,10 +49,10 @@ public class GridComponentsProvider
                 {
                     new(_linearFunctionsProvider.CreateFirstFunction(nodes[1].R, elementWidth),
                         _linearFunctionsProvider.CreateFirstFunction(nodes[2].Z, elementHeight)),
-                    new(_linearFunctionsProvider.CreateFirstFunction(nodes[1].R, elementWidth),
-                        _linearFunctionsProvider.CreateSecondFunction(nodes[0].Z, elementHeight)),
                     new(_linearFunctionsProvider.CreateSecondFunction(nodes[0].R, elementWidth),
                         _linearFunctionsProvider.CreateFirstFunction(nodes[2].Z, elementHeight)),
+                    new(_linearFunctionsProvider.CreateFirstFunction(nodes[1].R, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(nodes[0].Z, elementHeight)),
                     new(_linearFunctionsProvider.CreateSecondFunction(nodes[0].R, elementWidth),
                         _linearFunctionsProvider.CreateSecondFunction(nodes[0].Z, elementHeight))
                 };

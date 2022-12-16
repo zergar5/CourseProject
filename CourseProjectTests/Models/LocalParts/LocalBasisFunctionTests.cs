@@ -1,10 +1,7 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
+﻿using CourseProject.Models.LocalParts;
 using CourseProject.Tools.Providers;
-using CourseProject.Tools;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Models.LocalParts;
 
 public class LocalBasisFunctionTests
 {

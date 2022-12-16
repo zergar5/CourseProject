@@ -1,12 +1,10 @@
-﻿using System.Security.Cryptography.X509Certificates;
-using CourseProject.Factories;
+﻿using CourseProject.Factories;
 using CourseProject.Models.Grid;
 using CourseProject.Tools.Providers;
-using CourseProject.Tools;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Models.Grid;
 
-public class PComponentsProviderTests
+public class AdjacencyListTest
 {
     private MaterialFactory _materialFactory;
     private LinearFunctionsProvider _linearFunctionsProvider;
@@ -15,9 +13,7 @@ public class PComponentsProviderTests
     private Node[] _cornerNodes;
     private int _numberByWidth;
     private int _numberByHeight;
-    private Grid _grid;
-    private NodeFinder _nodeFinder;
-    private PComponentsProvider _pComponentsProvider;
+    private CourseProject.Models.Grid.Grid _grid;
 
     [SetUp]
     public void Setup()
@@ -47,18 +43,27 @@ public class PComponentsProviderTests
         _numberByWidth = 2;
         _numberByHeight = 2;
         _grid = _gridFactory.CreateGrid(_cornerNodes, _numberByWidth, _numberByHeight);
-        _nodeFinder = new NodeFinder(_grid);
-        double F(double x, double y) => x * y;
-        _pComponentsProvider = new PComponentsProvider(F, _nodeFinder);
-
     }
 
-    [TestCase(0.0, 0)]
-    [TestCase(4.0, 4)]
-    [TestCase(0.0, 6)]
-    public void CalcRightPartTest(double actual, int nodeNumber)
+    [Test]
+    public void CreateAdjacencyTest()
     {
-        var expected = _pComponentsProvider.CalcRightPart(nodeNumber);
-        Assert.That(actual, Is.EqualTo(expected));
+        var actualAdjacencyList = new List<SortedSet<int>>
+        {
+            new(),
+            new() { 0 },
+            new() { 1 },
+            new() { 0, 1 },
+            new() { 0, 1, 2, 3 },
+            new() { 1, 2, 4 },
+            new() { 3, 4 },
+            new() { 3, 4, 5, 6 },
+            new() { 4, 5, 7 }
+        };
+
+        var expectedAdjacencyList = new AdjacencyList(_grid);
+        expectedAdjacencyList.CreateAdjacencyList();
+
+        CollectionAssert.AreEqual(expectedAdjacencyList.List, actualAdjacencyList);
     }
 }

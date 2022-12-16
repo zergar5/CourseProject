@@ -1,10 +1,11 @@
 ﻿using CourseProject.Factories;
 using CourseProject.Models.Grid;
+using CourseProject.Tools;
 using CourseProject.Tools.Providers;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Providers;
 
-public class AdjacencyListTest
+public class PComponentsProviderTests
 {
     private MaterialFactory _materialFactory;
     private LinearFunctionsProvider _linearFunctionsProvider;
@@ -14,6 +15,8 @@ public class AdjacencyListTest
     private int _numberByWidth;
     private int _numberByHeight;
     private Grid _grid;
+    private NodeFinder _nodeFinder;
+    private PComponentsProvider _pComponentsProvider;
 
     [SetUp]
     public void Setup()
@@ -43,27 +46,18 @@ public class AdjacencyListTest
         _numberByWidth = 2;
         _numberByHeight = 2;
         _grid = _gridFactory.CreateGrid(_cornerNodes, _numberByWidth, _numberByHeight);
+        _nodeFinder = new NodeFinder(_grid);
+        double F(double x, double y) => x * y;
+        _pComponentsProvider = new PComponentsProvider(F, _nodeFinder);
+
     }
 
-    [Test]
-    public void CreateAdjacencyTest()
+    [TestCase(0.0, 0)]
+    [TestCase(4.0, 4)]
+    [TestCase(0.0, 6)]
+    public void CalcRightPartTest(double actual, int nodeNumber)
     {
-        var actualAdjacencyList = new List<SortedSet<int>>
-        {
-            new(),
-            new() { 0 },
-            new() { 1 },
-            new() { 0, 1 },
-            new() { 0, 1, 2, 3 },
-            new() { 1, 2, 4 },
-            new() { 3, 4 },
-            new() { 3, 4, 5, 6 },
-            new() { 4, 5, 7 }
-        };
-
-        var expectedAdjacencyList = new AdjacencyList(_grid);
-        expectedAdjacencyList.CreateAdjacencyList();
-
-        CollectionAssert.AreEqual(expectedAdjacencyList.List, actualAdjacencyList);
+        var expected = _pComponentsProvider.CalcRightPart(nodeNumber);
+        Assert.That(actual, Is.EqualTo(expected));
     }
 }

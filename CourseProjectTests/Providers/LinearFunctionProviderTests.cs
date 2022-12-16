@@ -1,6 +1,6 @@
 ﻿using CourseProject.Tools.Providers;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Providers;
 
 public class LinearFunctionProviderTests
 {

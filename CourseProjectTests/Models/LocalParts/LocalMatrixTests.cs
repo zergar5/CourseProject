@@ -1,6 +1,6 @@
 ﻿using CourseProject.Models.LocalParts;
 
-namespace CourseProjectTests;
+namespace CourseProjectTests.Models.LocalParts;
 
 public class LocalMatrixTests
 {

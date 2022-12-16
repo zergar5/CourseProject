@@ -1,4 +1,4 @@
-namespace CourseProjectTests;
+namespace CourseProjectTests.Factories;
 
 public class Tests
 {
