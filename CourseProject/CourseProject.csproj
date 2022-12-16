@@ -8,6 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Tools\Calculators\IntegralCalculator.cs~RFa6ecf3fc.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Folder Include="Tools\Calculators\" />
     <Folder Include="SLAESolution\" />
   </ItemGroup>

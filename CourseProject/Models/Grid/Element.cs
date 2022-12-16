@@ -65,13 +65,13 @@ public class Element : IEquatable<Element>
         }
     }
 
-    public void CalcRightPart(PComponentsProvider rightPartProvider)
+    public void CalcRightPart(PComponentsProvider pComponentsProvider)
     {
         var rightPart = new LocalVector(Nodes.Length);
 
         for (var i = 0; i < Nodes.Length; i++)
         {
-            rightPart[i] = rightPartProvider.CalcRightPart(GlobalNodesNumbers[i]);
+            rightPart[i] = pComponentsProvider.CalcRightPart(GlobalNodesNumbers[i]);
         }
 
         RightPart = MassMatrix * rightPart;

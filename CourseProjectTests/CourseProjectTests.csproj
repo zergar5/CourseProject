@@ -20,4 +20,8 @@
     <ProjectReference Include="..\CourseProject\CourseProject.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="SLAE\" />
+  </ItemGroup>
+
 </Project>
