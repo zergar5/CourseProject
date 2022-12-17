@@ -50,7 +50,7 @@ public class GlobalVectorTests
         CollectionAssert.AreEqual(expectedVector.VectorArray, actualVector.VectorArray);
     }
 
-    [TestCase(7.416198487095663)]
+    [TestCase(7.4161984870956629)]
     public void CalcNormTest(double actualNorm)
     {
         var expectedNorm = _globalVector.CalcNorm();

@@ -7,14 +7,13 @@ namespace CourseProjectTests.Calculators;
 public class IntegralCalculatorTests
 {
     private LinearFunctionsProvider _linearFunctionsProvider;
+    private const double _eps = 1.0e-13;
 
     [SetUp]
     public void Setup()
     {
         _linearFunctionsProvider = new LinearFunctionsProvider();
     }
-
-    //Поменять на сравнение с эпсилоном
 
     [TestCase(0.5)]
     public void CalcDoubleIntegralForStiffnessTest11(double actual)
@@ -24,7 +23,7 @@ public class IntegralCalculatorTests
         var expected =
             IntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(2, 0, 2, 0, localBasisFunction, localBasisFunction,
                 1.0);
-        Assert.That(expected, Is.EqualTo(actual));
+        Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
 
     [TestCase(0.222222222222222)]
@@ -34,7 +33,7 @@ public class IntegralCalculatorTests
             _linearFunctionsProvider.CreateFirstFunction(2.0, 2.0));
         var expected = IntegralCalculator.CalcDoubleIntegralForMassMatrix(2, 0, 2, 0, localBasisFunction,
             localBasisFunction);
-        Assert.That(expected, Is.EqualTo(actual));
+        Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
 
     [TestCase(-0.166666666666667)]
@@ -47,7 +46,7 @@ public class IntegralCalculatorTests
         var expected =
             IntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(2, 0, 2, 0, localBasisFunctionI, localBasisFunctionJ,
                 1.0);
-        Assert.That(expected, Is.EqualTo(actual));
+        Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
 
     [TestCase(0.222222222222222)]
@@ -59,6 +58,6 @@ public class IntegralCalculatorTests
             _linearFunctionsProvider.CreateFirstFunction(2.0, 2.0));
         var expected = IntegralCalculator.CalcDoubleIntegralForMassMatrix(2, 0, 2, 0, localBasisFunctionI,
             localBasisFunctionJ);
-        Assert.That(expected, Is.EqualTo(actual));
+        Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
 }

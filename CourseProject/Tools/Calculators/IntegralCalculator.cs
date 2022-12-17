@@ -17,15 +17,6 @@ public class IntegralCalculator
         var hr = (rUpperLimit - rDownLimit) / NumberOfSegments;
         var hz = (zUpperLimit - zDownLimit) / NumberOfSegments;
 
-        var rGrid = new double[NumberOfSegments + 1];
-        var zGrid = new double[NumberOfSegments + 1];
-
-        for (var i = 0; i < NumberOfSegments + 1; i++)
-        {
-            rGrid[i] = rDownLimit + i * hr;
-            zGrid[i] = zUpperLimit + i * hz;
-        }
-
         var outerIntegralValue = 0.0;
 
         for (var i = 0; i < GaussMethodNumber; i++)
@@ -34,8 +25,7 @@ public class IntegralCalculator
 
             for (var r = 0; r < NumberOfSegments; r++)
             {
-                //var rI = (rDownLimit + r * hr + rDownLimit + (r + 1) * hr) / 2.0 + InterpolationNodes[i] * hr / 2.0;
-                var rI = (rGrid[r] + rGrid[r + 1]) / 2.0 + InterpolationNodes[i] * hr / 2.0;
+                var rI = (rDownLimit + r * hr + rDownLimit + (r + 1) * hr) / 2.0 + InterpolationNodes[i] * hr / 2.0;
 
                 var innerIntegralValue = 0.0;
 
@@ -44,8 +34,7 @@ public class IntegralCalculator
                     var sumOfInnerIntegral = 0.0;
                     for (var z = 0; z < NumberOfSegments; z++)
                     {
-                        //var zJ = (zDownLimit + z * hz + zDownLimit + (z + 1) * hz) / 2.0 + InterpolationNodes[j] * hz / 2.0;
-                        var zJ = (zGrid[z] + zGrid[z + 1]) / 2.0 + InterpolationNodes[j] * hz / 2.0;
+                        var zJ = (zDownLimit + z * hz + zDownLimit + (z + 1) * hz) / 2.0 + InterpolationNodes[j] * hz / 2.0;
 
                         sumOfInnerIntegral += hz * rI *
                                               (DerivativeCalculator.CalcDerivative(PsiI, rI, zJ, 'r') *
@@ -70,15 +59,6 @@ public class IntegralCalculator
         var hr = (rUpperLimit - rDownLimit) / NumberOfSegments;
         var hz = (zUpperLimit - zDownLimit) / NumberOfSegments;
 
-        var rGrid = new double[NumberOfSegments + 1];
-        var zGrid = new double[NumberOfSegments + 1];
-
-        for (var i = 0; i < NumberOfSegments + 1; i++)
-        {
-            rGrid[i] = rDownLimit + i * hr;
-            zGrid[i] = zUpperLimit + i * hz;
-        }
-
         var outerIntegralValue = 0.0;
 
         for (var i = 0; i < GaussMethodNumber; i++)
@@ -87,7 +67,7 @@ public class IntegralCalculator
 
             for (var r = 0; r < NumberOfSegments; r++)
             {
-                var rI = (rGrid[r] + rGrid[r + 1]) / 2.0 + InterpolationNodes[i] * hr / 2.0;
+                var rI = (rDownLimit + r * hr + rDownLimit + (r + 1) * hr) / 2.0 + InterpolationNodes[i] * hr / 2.0;
 
                 var innerIntegralValue = 0.0;
 
@@ -96,7 +76,8 @@ public class IntegralCalculator
                     var sumOfInnerIntegral = 0.0;
                     for (var z = 0; z < NumberOfSegments; z++)
                     {
-                        var zJ = (zGrid[z] + zGrid[z + 1]) / 2.0 + InterpolationNodes[j] * hz / 2.0;
+                        var zJ = (zDownLimit + z * hz + zDownLimit + (z + 1) * hz) / 2.0 + InterpolationNodes[j] * hz / 2.0;
+
                         sumOfInnerIntegral += hz * rI * PsiI.CalcFunction(rI, zJ) * PsiJ.CalcFunction(rI, zJ);
                     }
 
