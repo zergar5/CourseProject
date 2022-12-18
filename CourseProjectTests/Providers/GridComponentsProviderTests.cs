@@ -54,13 +54,6 @@ public class GridComponentsProviderTests
         var actualElements = new[]
         {
             new Element(
-                new[]
-                {
-                    new Node(0.0, 0.0),
-                    new Node(2.0, 0.0),
-                    new Node(0.0, 2.0),
-                    new Node(2.0, 2.0)
-                },
                 new[] { 0, 1, 3, 4 },
                 _materialFactory.CreateMaterial(0),
                 new LocalBasisFunction[]
@@ -76,13 +69,6 @@ public class GridComponentsProviderTests
                 }
             ),
             new Element(
-                new[]
-                {
-                    new Node(2.0, 0.0),
-                    new Node(4.0, 0.0),
-                    new Node(2.0, 2.0),
-                    new Node(4.0, 2.0)
-                },
                 new[] { 1, 2, 4, 5 },
                 _materialFactory.CreateMaterial(0),
                 new LocalBasisFunction[]
@@ -98,13 +84,6 @@ public class GridComponentsProviderTests
                 }
             ),
             new Element(
-                new[]
-                {
-                    new Node(0.0, 2.0),
-                    new Node(2.0, 2.0),
-                    new Node(0.0, 4.0),
-                    new Node(2.0, 4.0)
-                },
                 new[] { 3, 4, 6, 7 },
                 _materialFactory.CreateMaterial(0),
                 new LocalBasisFunction[]
@@ -120,13 +99,6 @@ public class GridComponentsProviderTests
                 }
             ),
             new Element(
-                new[]
-                {
-                    new Node(2.0, 2.0),
-                    new Node(4.0, 2.0),
-                    new Node(2.0, 4.0),
-                    new Node(4.0, 4.0)
-                },
                 new[] { 4, 5, 7, 8 },
                 _materialFactory.CreateMaterial(0),
                 new LocalBasisFunction[]

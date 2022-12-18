@@ -1,4 +1,5 @@
 ﻿using CourseProject.Models.LocalParts;
+using CourseProject.Tools;
 using CourseProject.Tools.Calculators;
 using CourseProject.Tools.Providers;
 
@@ -6,7 +7,6 @@ namespace CourseProject.Models.Grid;
 
 public class Element : IEquatable<Element>
 {
-    public Node[] Nodes { get; set; }
     public int[] GlobalNodesNumbers { get; set; }
     public Material Material { get; set; }
     public LocalBasisFunction[] LocalBasisFunctions { get; set; }
@@ -15,26 +15,25 @@ public class Element : IEquatable<Element>
     public LocalMatrix LocalMatrixA { get; set; }
     public LocalVector RightPart { get; set; }
 
-    public Element(Node[] nodes, int[] globalNodesNumbers, Material material, LocalBasisFunction[] localBasisFunctions)
+    public Element(int[] globalNodesNumbers, Material material, LocalBasisFunction[] localBasisFunctions)
     {
-        Nodes = nodes;
         GlobalNodesNumbers = globalNodesNumbers;
         Material = material;
         LocalBasisFunctions = localBasisFunctions;
     }
 
-    public void CalcStiffnessMatrix()
+    public void CalcStiffnessMatrix(NodeFinder nodeFinder)
     {
-        StiffnessMatrix = new LocalMatrix(Nodes.Length, Nodes.Length);
+        StiffnessMatrix = new LocalMatrix(GlobalNodesNumbers.Length, GlobalNodesNumbers.Length);
 
-        var rUpperLimit = Nodes[1].R;
-        var rDownLimit = Nodes[0].R;
-        var zUpperLimit = Nodes[2].Z;
-        var zDownLimit = Nodes[0].Z;
+        var rUpperLimit = nodeFinder.FindNode(GlobalNodesNumbers[1]).R;
+        var rDownLimit = nodeFinder.FindNode(GlobalNodesNumbers[0]).R;
+        var zUpperLimit = nodeFinder.FindNode(GlobalNodesNumbers[2]).Z;
+        var zDownLimit = nodeFinder.FindNode(GlobalNodesNumbers[0]).Z;
 
-        for (var i = 0; i < Nodes.Length; i++)
+        for (var i = 0; i < GlobalNodesNumbers.Length; i++)
         {
-            for (var j = 0; j < Nodes.Length; j++)
+            for (var j = 0; j < GlobalNodesNumbers.Length; j++)
             {
                 StiffnessMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(rUpperLimit, rDownLimit, zUpperLimit,
@@ -44,18 +43,18 @@ public class Element : IEquatable<Element>
         }
     }
 
-    public void CalcMassMatrix()
+    public void CalcMassMatrix(NodeFinder nodeFinder)
     {
-        MassMatrix = new LocalMatrix(Nodes.Length, Nodes.Length);
+        MassMatrix = new LocalMatrix(GlobalNodesNumbers.Length, GlobalNodesNumbers.Length);
 
-        var rUpperLimit = Nodes[1].R;
-        var rDownLimit = Nodes[0].R;
-        var zUpperLimit = Nodes[2].Z;
-        var zDownLimit = Nodes[0].Z;
+        var rUpperLimit = nodeFinder.FindNode(GlobalNodesNumbers[1]).R;
+        var rDownLimit = nodeFinder.FindNode(GlobalNodesNumbers[0]).R;
+        var zUpperLimit = nodeFinder.FindNode(GlobalNodesNumbers[2]).Z;
+        var zDownLimit = nodeFinder.FindNode(GlobalNodesNumbers[0]).Z;
 
-        for (var i = 0; i < Nodes.Length; i++)
+        for (var i = 0; i < GlobalNodesNumbers.Length; i++)
         {
-            for (var j = 0; j < Nodes.Length; j++)
+            for (var j = 0; j < GlobalNodesNumbers.Length; j++)
             {
                 MassMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForMassMatrix(rUpperLimit, rDownLimit, zUpperLimit,
@@ -67,9 +66,9 @@ public class Element : IEquatable<Element>
 
     public void CalcRightPart(PComponentsProvider pComponentsProvider)
     {
-        var rightPart = new LocalVector(Nodes.Length);
+        var rightPart = new LocalVector(GlobalNodesNumbers.Length);
 
-        for (var i = 0; i < Nodes.Length; i++)
+        for (var i = 0; i < GlobalNodesNumbers.Length; i++)
         {
             rightPart[i] = pComponentsProvider.CalcRightPart(GlobalNodesNumbers[i]);
         }
@@ -84,7 +83,6 @@ public class Element : IEquatable<Element>
 
     public bool Equals(Element? other)
     {
-        return Nodes.SequenceEqual(other.Nodes) && GlobalNodesNumbers.SequenceEqual(other.GlobalNodesNumbers) &&
-               Material.Equals(other.Material);
+        return GlobalNodesNumbers.SequenceEqual(other.GlobalNodesNumbers) && Material.Equals(other.Material);
     }
 }

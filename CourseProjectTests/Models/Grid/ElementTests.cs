@@ -72,7 +72,7 @@ public class ElementTests
             { -9.2130079606955739E-15, -0.33333333333321979, 0.49999999999992706, -0.16666666666669783 },
             { -0.33333333333321968, -0.33333333333344195, -0.16666666666669783, 0.8333333333333599 }
         };
-        _element.CalcStiffnessMatrix();
+        _element.CalcStiffnessMatrix(_nodeFinder);
         CollectionAssert.AreEqual(_element.StiffnessMatrix.Matrix, actualLocalMatrix);
     }
 
@@ -86,7 +86,7 @@ public class ElementTests
             { 0.11111111111106595, 0.11111111111106589, 0.22222222222219967, 0.22222222222219978 },
             { 0.11111111111106589, 0.33333333333333337, 0.22222222222219978, 0.66666666666687047 }
         };
-        _element.CalcMassMatrix();
+        _element.CalcMassMatrix(_nodeFinder);
         CollectionAssert.AreEqual(_element.MassMatrix.Matrix, actualLocalMatrix);
     }
 
@@ -94,7 +94,7 @@ public class ElementTests
     public void CalcRightPartTest()
     {
         var actualVector = new[] { 0.44444444444426356, 1.3333333333333335, 0.88888888888879913, 2.6666666666674819 };
-        _element.CalcMassMatrix();
+        _element.CalcMassMatrix(_nodeFinder);
         _element.CalcRightPart(_pComponentsProvider);
         CollectionAssert.AreEqual(_element.RightPart.VectorArray, actualVector);
     }
@@ -122,8 +122,8 @@ public class ElementTests
 
         var actualLocalMatrix = localMatrix1 + localMatrix2;
 
-        _element.CalcStiffnessMatrix();
-        _element.CalcMassMatrix();
+        _element.CalcStiffnessMatrix(_nodeFinder);
+        _element.CalcMassMatrix(_nodeFinder);
         _element.CalcAMatrix();
 
         CollectionAssert.AreEqual(_element.LocalMatrixA.Matrix, actualLocalMatrix.Matrix);
