@@ -1,6 +1,4 @@
-﻿using System.Numerics;
-
-namespace CourseProject.Models.LocalParts;
+﻿namespace CourseProject.Models.LocalParts;
 
 public class LocalMatrix
 {

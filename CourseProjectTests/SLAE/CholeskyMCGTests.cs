@@ -1,10 +1,5 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.GlobalParts;
-using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
+﻿using CourseProject.Models.GlobalParts;
 using CourseProject.SLAESolution;
-using CourseProject.Tools.Providers;
-using CourseProject.Tools;
 
 namespace CourseProjectTests.SLAE;
 

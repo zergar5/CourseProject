@@ -2,9 +2,7 @@
 using CourseProject.Models.Grid;
 using CourseProject.Models.LocalParts;
 using CourseProject.Tools;
-using CourseProject.Tools.Calculators;
 using CourseProject.Tools.Providers;
-using System;
 
 namespace CourseProjectTests.Models.Grid;
 

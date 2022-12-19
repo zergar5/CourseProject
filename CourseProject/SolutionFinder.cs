@@ -9,7 +9,6 @@ public class SolutionFinder
     private readonly Grid _grid;
     private readonly GlobalVector _globalVector;
     private readonly NodeFinder _nodeFinder;
-    private const double Eps = 1.0e-16;
 
     public SolutionFinder(Grid grid, GlobalVector globalVector, NodeFinder nodeFinder)
     {
@@ -21,10 +20,10 @@ public class SolutionFinder
     public double FindSolution(Node node)
     {
         var result = 0.0;
-        foreach (var element in _grid.Elements)
+        foreach (var element in _grid)
         {
             if (!CheckInside(element, node)) continue;
-            foreach (var globalNodeNumber in element.GlobalNodesNumbers)
+            foreach (var globalNodeNumber in element)
             {
                 var i = 0;
                 if (_nodeFinder.FindNode(globalNodeNumber).Equals(node))

@@ -60,6 +60,8 @@ public class CholeskyMCG
             CourseHolder.GetInfo(i, residual);
         }
 
+        Console.WriteLine();
+
         return x;
     }
 }

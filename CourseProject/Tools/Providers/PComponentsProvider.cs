@@ -1,6 +1,4 @@
-﻿using CourseProject.Models.Grid;
-
-namespace CourseProject.Tools.Providers;
+﻿namespace CourseProject.Tools.Providers;
 
 public class PComponentsProvider
 {

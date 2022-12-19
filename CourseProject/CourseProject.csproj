@@ -12,6 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Output\GlobalVectors\" />
     <Folder Include="Tools\Calculators\" />
     <Folder Include="SLAESolution\" />
   </ItemGroup>

@@ -8,28 +8,28 @@ public class MaterialIO
 
     public MaterialIO(string path)
     {
-        _path=path;
+        _path = path;
     }
 
     public void ReadMaterialsParametersFromFile(string fileName, out List<double[]> lambdasList, out List<double> gammasList)
     {
         using var streamReader = new StreamReader(_path + fileName);
-        var materialsParameters = streamReader.ReadToEnd().Split('\n');
+        var materialsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
         lambdasList = new List<double[]>(materialsParameters.Length);
         gammasList = new List<double>(materialsParameters.Length);
         var i = 0;
         foreach (var materialParameters in materialsParameters)
         {
             var materialData = materialParameters.Split(' ');
-            lambdasList[i] = new ReadOnlySpan<string>(materialData, 0, 9).ToArray().Select(double.Parse).ToArray();
-            gammasList[i++] = double.Parse(materialData[^1]);
+            lambdasList.Add(new ReadOnlySpan<string>(materialData, 0, 9).ToArray().Select(double.Parse).ToArray());
+            gammasList.Add(double.Parse(materialData[^1]));
         }
     }
 
     public Material[] ReadMaterialsFromFile(string fileName)
     {
         using var streamReader = new StreamReader(_path + fileName);
-        var materialsParameters = streamReader.ReadToEnd().Split('\n');
+        var materialsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
         var materials = new Material[materialsParameters.Length];
         var i = 0;
         foreach (var materialParameters in materialsParameters)

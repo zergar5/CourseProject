@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "CourseProject": {
+      "commandName": "Project",
+      "workingDirectory": "..\\CourseProject\\"
+    }
+  }
+}

@@ -1,6 +1,4 @@
-﻿using System.Text.Json.Serialization;
-using System.Xml.Linq;
-using CourseProject.Models.LocalParts;
+﻿using CourseProject.Models.LocalParts;
 using CourseProject.Tools;
 using CourseProject.Tools.Calculators;
 using CourseProject.Tools.Providers;
@@ -89,4 +87,6 @@ public class Element : IEquatable<Element>
     {
         return GlobalNodesNumbers.SequenceEqual(other.GlobalNodesNumbers) && Material.Equals(other.Material);
     }
+
+    public IEnumerator<int> GetEnumerator() => ((IEnumerable<int>)GlobalNodesNumbers).GetEnumerator();
 }

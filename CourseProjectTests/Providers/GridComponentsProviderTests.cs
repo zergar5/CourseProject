@@ -13,6 +13,7 @@ public class GridComponentsProviderTests
     private Node[] _cornerNodes;
     private int _numberByWidth;
     private int _numberByHeight;
+    private Material[] _material;
 
     [SetUp]
     public void Setup()
@@ -40,6 +41,13 @@ public class GridComponentsProviderTests
         };
         _numberByWidth = 2;
         _numberByHeight = 2;
+        _material = new[]
+        {
+            _materialFactory.CreateMaterial(0),
+            _materialFactory.CreateMaterial(1),
+            _materialFactory.CreateMaterial(2),
+            _materialFactory.CreateMaterial(0)
+        };
     }
 
     [Test]
@@ -116,6 +124,84 @@ public class GridComponentsProviderTests
         };
         var expectedElements =
             _gridComponentsProvider.CreateElements(_cornerNodes, _numberByWidth, _numberByHeight);
+
+        CollectionAssert.AreEqual(expectedElements, actualElements);
+    }
+
+    [Test]
+    public void CreateElementsWithFinishedMaterialsTest()
+    {
+        var width = _cornerNodes[1].R - _cornerNodes[0].R;
+        var height = _cornerNodes[1].Z - _cornerNodes[0].Z;
+
+        var elementWidth = width / _numberByWidth;
+        var elementHeight = height / _numberByHeight;
+
+        var actualElements = new[]
+        {
+            new Element(
+                new[] { 0, 1, 3, 4 },
+                _material[0],
+                new LocalBasisFunction[]
+                {
+                    new(_linearFunctionsProvider.CreateFirstFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(2.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateFirstFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(0.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(0.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(2.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(0.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(0.0, elementHeight))
+                }
+            ),
+            new Element(
+                new[] { 1, 2, 4, 5 },
+                _material[1],
+                new LocalBasisFunction[]
+                {
+                    new(_linearFunctionsProvider.CreateFirstFunction(4.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(2.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateFirstFunction(4.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(0.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(2.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(0.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(0.0, elementHeight))
+                }
+            ),
+            new Element(
+                new[] { 3, 4, 6, 7 },
+                _material[2],
+                new LocalBasisFunction[]
+                {
+                    new(_linearFunctionsProvider.CreateFirstFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(4.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateFirstFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(2.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(0.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(4.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(0.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(2.0, elementHeight))
+                }
+            ),
+            new Element(
+                new[] { 4, 5, 7, 8 },
+                _material[0],
+                new LocalBasisFunction[]
+                {
+                    new(_linearFunctionsProvider.CreateFirstFunction(4.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(4.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateFirstFunction(4.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(2.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(4.0, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(2.0, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(2.0, elementHeight))
+                }
+            )
+        };
+        var expectedElements =
+            _gridComponentsProvider.CreateElements(_cornerNodes, _numberByWidth, _numberByHeight, _material);
 
         CollectionAssert.AreEqual(expectedElements, actualElements);
     }

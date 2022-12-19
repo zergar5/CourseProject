@@ -20,11 +20,11 @@ public class GridIO
         cornerNodes = new Node[2];
 
         Console.Write("Input bottom left point: ");
-        var point = Console.ReadLine().Split(' ').Select(double.Parse).ToArray();
+        var point = Console.ReadLine().Replace('.', ',').Split(' ').Select(double.Parse).ToArray();
         cornerNodes[0] = new Node(point[0], point[1]);
 
         Console.Write("Input upper right point: ");
-        point = Console.ReadLine().Split(' ').Select(double.Parse).ToArray();
+        point = Console.ReadLine().Replace('.', ',').Split(' ').Select(double.Parse).ToArray();
         cornerNodes[1] = new Node(point[0], point[1]);
 
         Console.Write("Input number by width: ");
@@ -41,13 +41,13 @@ public class GridIO
             using var streamReader = new StreamReader(_path + fileName);
             cornerNodes = new Node[2];
 
-            var point = streamReader.ReadLine().Split(' ').Select(double.Parse).ToArray();
+            var point = streamReader.ReadLine().Replace('.', ',').Split(' ').Select(double.Parse).ToArray();
             cornerNodes[0] = new Node(point[0], point[1]);
 
-            point = streamReader.ReadLine().Split(' ').Select(double.Parse).ToArray();
+            point = streamReader.ReadLine().Replace('.', ',').Split(' ').Select(double.Parse).ToArray();
             cornerNodes[1] = new Node(point[0], point[1]);
 
-            var numberByWidthAndHeight = streamReader.ReadLine().Split(' ').Select(int.Parse).ToArray();
+            var numberByWidthAndHeight = streamReader.ReadLine().Replace('.', ',').Split(' ').Select(int.Parse).ToArray();
             numberByWidth = numberByWidthAndHeight[0];
             numberByHeight = numberByWidthAndHeight[1];
         }
@@ -57,17 +57,9 @@ public class GridIO
         }
     }
 
-    public Grid ReadGridFromJson(string fileName)
-    {
-        using var fileStream = new FileStream(_path + fileName, FileMode.OpenOrCreate);
-        var grid = JsonSerializer.Deserialize<Grid>(fileStream);
-        if (grid == null) throw new Exception("Can't read grid from file");
-        return grid;
-    }
-
     public void WriteGridToJson(string fileName, Grid grid)
     {
         using var fileStream = new FileStream(_path + fileName, FileMode.OpenOrCreate);
-        JsonSerializer.Serialize(fileStream, grid);
+        JsonSerializer.Serialize(fileStream, grid, new JsonSerializerOptions { WriteIndented = true });
     }
 }

@@ -23,4 +23,16 @@ public class GridFactory
 
         return grid;
     }
+
+    public Grid CreateGrid(Node[] cornerNodes, int numberByWidth, int numberByHeight, Material[] materials)
+    {
+        var grid = new Grid(
+            _gridComponentsProvider.CreateNodes(cornerNodes, numberByWidth, numberByHeight),
+            _gridComponentsProvider.CreateElements(cornerNodes, numberByWidth, numberByHeight, materials),
+            cornerNodes,
+            numberByWidth,
+            numberByHeight);
+
+        return grid;
+    }
 }

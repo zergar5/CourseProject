@@ -6,7 +6,7 @@ namespace CourseProjectTests.Models.LocalParts;
 public class LocalBasisFunctionTests
 {
     private LinearFunctionsProvider _linearFunctionsProvider;
-    
+
     [SetUp]
     public void Setup()
     {

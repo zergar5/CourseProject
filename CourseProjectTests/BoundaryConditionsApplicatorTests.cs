@@ -1,8 +1,5 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.BoundaryConditions;
+﻿using CourseProject.Models.BoundaryConditions;
 using CourseProject.Models.GlobalParts;
-using CourseProject.Models.Grid;
-using CourseProject.Tools.Providers;
 using CourseProject.Tools;
 
 namespace CourseProjectTests;
@@ -12,7 +9,7 @@ public class BoundaryConditionsApplicatorTests
     private GlobalMatrix _globalMatrix;
     private GlobalVector _globalVector;
     private BoundaryConditionsApplicator _boundConditionsApplicator;
-    
+
     [SetUp]
     public void Setup()
     {

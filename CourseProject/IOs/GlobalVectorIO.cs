@@ -15,7 +15,7 @@ public class GlobalVectorIO
     public GlobalVector Read(string fileName)
     {
         using var streamReader = new StreamReader(_path + fileName);
-        var vectorValues = streamReader.ReadLine().Split(' ').Select(double.Parse).ToArray();
+        var vectorValues = streamReader.ReadLine().Replace('.', ',').Split(' ').Select(double.Parse).ToArray();
         var vector = new GlobalVector(vectorValues);
 
         return vector;

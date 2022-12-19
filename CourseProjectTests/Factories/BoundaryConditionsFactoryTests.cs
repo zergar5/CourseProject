@@ -1,8 +1,8 @@
 using CourseProject.Factories;
 using CourseProject.Models.BoundaryConditions;
 using CourseProject.Models.Grid;
-using CourseProject.Tools.Providers;
 using CourseProject.Tools;
+using CourseProject.Tools.Providers;
 
 namespace CourseProjectTests.Factories;
 
@@ -54,14 +54,14 @@ public class BoundaryConditionFactoryTests
     [Test]
     public void CreateFirstBoundaryConditionTest()
     {
-        var globalNodesNumbers = new [] { 0, 1 };
+        var globalNodesNumbers = new[] { 0, 1 };
 
         var us = new[] { 0.0, 2.0 };
 
         var expectedFirstBoundaryCondition =
             _boundaryConditionFactory.CreateFirstBoundaryCondition(globalNodesNumbers, us);
         var actualFirstBoundaryCondition = new FirstBoundaryCondition(globalNodesNumbers, us);
-        
+
         CollectionAssert.AreEqual(expectedFirstBoundaryCondition.GlobalNodesNumbers, actualFirstBoundaryCondition.GlobalNodesNumbers);
         CollectionAssert.AreEqual(expectedFirstBoundaryCondition.Us, actualFirstBoundaryCondition.Us);
     }

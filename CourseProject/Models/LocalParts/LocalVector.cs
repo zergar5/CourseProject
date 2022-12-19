@@ -53,5 +53,5 @@ public class LocalVector
         return vector;
     }
 
-    public IEnumerator<double> GetEnumerator() => (IEnumerator<double>)VectorArray.GetEnumerator();
+    public IEnumerator<double> GetEnumerator() => ((IEnumerable<double>)VectorArray).GetEnumerator();
 }

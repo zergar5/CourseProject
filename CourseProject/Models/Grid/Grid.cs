@@ -1,6 +1,4 @@
-﻿using System.Collections;
-
-namespace CourseProject.Models.Grid;
+﻿namespace CourseProject.Models.Grid;
 
 public class Grid
 {
@@ -18,4 +16,6 @@ public class Grid
         NumberByWidth = numberByWidth;
         NumberByHeight = numberByHeight;
     }
+
+    public IEnumerator<Element> GetEnumerator() => ((IEnumerable<Element>)Elements).GetEnumerator();
 }

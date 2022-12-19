@@ -1,7 +1,5 @@
 ﻿using CourseProject.Models.GlobalParts;
 using CourseProject.Models.LocalParts;
-using CourseProject.Tools.Calculators;
-using CourseProject.Tools.Providers;
 
 namespace CourseProjectTests.Models.GlobalParts;
 

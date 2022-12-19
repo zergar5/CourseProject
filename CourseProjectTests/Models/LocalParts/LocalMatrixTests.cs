@@ -9,7 +9,7 @@ public class LocalMatrixTests
     [SetUp]
     public void Setup()
     {
-        var matrix = new [,]
+        var matrix = new[,]
         {
             { 1.0, 2.0, 3.0 },
             { 4.0, 5.0, 6.0 },
