@@ -1,4 +1,5 @@
-﻿using CourseProject.Factories;
+﻿using System.Security.Cryptography.X509Certificates;
+using CourseProject.Factories;
 using CourseProject.Models.Grid;
 using CourseProject.Models.LocalParts;
 
@@ -25,41 +26,34 @@ public class GridComponentsProvider
         var elementWidth = width / numberByWidth;
         var elementHeight = height / numberByHeight;
 
-        for (var i = 0; i < numberByHeight; i++)
+        for (var r = 0; r < numberByHeight; r++)
         {
-            for (var j = 0; j < numberByWidth; j++)
+            for (var z = 0; z < numberByWidth; z++)
             {
-                //var nodes = new Node[]
-                //{
-                //    new(cornerNodes[0].R + elementWidth * j, cornerNodes[0].Z + elementHeight * i),
-                //    new(cornerNodes[0].R + elementWidth * (j + 1), cornerNodes[0].Z + elementHeight * i),
-                //    new(cornerNodes[0].R + elementWidth * j, cornerNodes[0].Z + elementHeight * (i + 1)),
-                //    new(cornerNodes[0].R + elementWidth * (j + 1), cornerNodes[0].Z + elementHeight * (i + 1))
-                //};
                 var globalNodesNumbers = new[]
                 {
-                    i * (numberByWidth + 1) + j,
-                    i * (numberByWidth + 1) + j + 1,
-                    (i + 1) * (numberByWidth + 1) + j,
-                    (i + 1) * (numberByWidth + 1) + j + 1
+                    r * (numberByWidth + 1) + z,
+                    r * (numberByWidth + 1) + z + 1,
+                    (r + 1) * (numberByWidth + 1) + z,
+                    (r + 1) * (numberByWidth + 1) + z + 1
                 };
                 var material = _materialFactory.CreateMaterial(0);
 
                 var localBasisFunctions = new LocalBasisFunction[]
                 {
-                    new(_linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].R + elementWidth * (j + 1), elementWidth),
-                        _linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].Z + elementHeight * (i + 1), elementHeight)),
-                    new(_linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].R + elementWidth * j, elementWidth),
-                        _linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].Z + elementHeight * (i + 1), elementHeight)),
-                    new(_linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].R + elementWidth * (j + 1), elementWidth),
-                        _linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].Z + elementHeight * i, elementHeight)),
-                    new(_linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].R + elementWidth * j, elementWidth),
-                        _linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].Z + elementHeight * i, elementHeight))
+                    new(_linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].R + elementWidth * (z + 1), elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].Z + elementHeight * (r + 1), elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].R + elementWidth * z, elementWidth),
+                        _linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].Z + elementHeight * (r + 1), elementHeight)),
+                    new(_linearFunctionsProvider.CreateFirstFunction(cornerNodes[0].R + elementWidth * (z + 1), elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].Z + elementHeight * r, elementHeight)),
+                    new(_linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].R + elementWidth * z, elementWidth),
+                        _linearFunctionsProvider.CreateSecondFunction(cornerNodes[0].Z + elementHeight * r, elementHeight))
                 };
 
                 var element = new Element(globalNodesNumbers, material, localBasisFunctions);
 
-                elements[i * numberByWidth + j] = element;
+                elements[r * numberByWidth + z] = element;
             }
         }
 
@@ -76,11 +70,11 @@ public class GridComponentsProvider
         var elementWidth = width / numberByWidth;
         var elementHeight = height / numberByHeight;
 
-        for (var i = 0; i < numberByHeight + 1; i++)
+        for (var r = 0; r < numberByHeight + 1; r++)
         {
-            for (var j = 0; j < numberByWidth + 1; j++)
+            for (var z = 0; z < numberByWidth + 1; z++)
             {
-                nodes[i * (numberByWidth + 1) + j] = new Node(cornerNodes[0].R + elementWidth * j, cornerNodes[0].Z + elementHeight * i);
+                nodes[r * (numberByWidth + 1) + z] = new Node(cornerNodes[0].R + elementWidth * z, cornerNodes[0].Z + elementHeight * r);
             }
         }
         return nodes;

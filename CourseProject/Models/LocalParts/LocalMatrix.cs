@@ -78,7 +78,7 @@ public class LocalMatrix
 
         if (matrix.CountRows() != vector.Count)
         {
-            throw new Exception("Can't sum matrix");
+            throw new Exception("Can't multiply matrix");
         }
 
         for (var i = 0; i < matrix.CountRows(); i++)

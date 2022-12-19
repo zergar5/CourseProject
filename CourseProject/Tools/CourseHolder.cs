@@ -1,4 +1,5 @@
-﻿using System.Text;
+﻿using CourseProject.Models.Grid;
+using System.Text;
 
 namespace CourseProject.Tools;
 
@@ -16,5 +17,10 @@ public class CourseHolder
         stringBuilder.Append("                                   \r");
 
         Console.Write(stringBuilder.ToString());
+    }
+
+    private static void WriteSolution(Node node, double result)
+    {
+        Console.WriteLine($"Function value at the point ({node.R}, {node.Z}) = {result}");
     }
 }

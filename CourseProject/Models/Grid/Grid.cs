@@ -1,4 +1,6 @@
-﻿namespace CourseProject.Models.Grid;
+﻿using System.Collections;
+
+namespace CourseProject.Models.Grid;
 
 public class Grid
 {

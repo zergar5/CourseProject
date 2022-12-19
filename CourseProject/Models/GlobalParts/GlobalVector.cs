@@ -29,7 +29,7 @@ public class GlobalVector : LocalVector, ICloneable
     {
         var subtractOfVector = new GlobalVector(vector1.Count);
 
-        if (vector1.Count != vector2.Count) throw new Exception("Can't sum vectors");
+        if (vector1.Count != vector2.Count) throw new Exception("Can't sub vectors");
 
         for (var i = 0; i < vector1.Count; i++)
         {

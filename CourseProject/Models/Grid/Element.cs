@@ -1,4 +1,6 @@
-﻿using CourseProject.Models.LocalParts;
+﻿using System.Text.Json.Serialization;
+using System.Xml.Linq;
+using CourseProject.Models.LocalParts;
 using CourseProject.Tools;
 using CourseProject.Tools.Calculators;
 using CourseProject.Tools.Providers;
@@ -33,12 +35,13 @@ public class Element : IEquatable<Element>
 
         for (var i = 0; i < GlobalNodesNumbers.Length; i++)
         {
-            for (var j = 0; j < GlobalNodesNumbers.Length; j++)
+            for (var j = 0; j <= i; j++)
             {
                 StiffnessMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(rUpperLimit, rDownLimit, zUpperLimit,
                         zDownLimit, LocalBasisFunctions[i],
                         LocalBasisFunctions[j], Material.Lambdas[0]);
+                StiffnessMatrix[j, i] = StiffnessMatrix[i, j];
             }
         }
     }
@@ -54,12 +57,13 @@ public class Element : IEquatable<Element>
 
         for (var i = 0; i < GlobalNodesNumbers.Length; i++)
         {
-            for (var j = 0; j < GlobalNodesNumbers.Length; j++)
+            for (var j = 0; j <= i; j++)
             {
                 MassMatrix[i, j] =
                     IntegralCalculator.CalcDoubleIntegralForMassMatrix(rUpperLimit, rDownLimit, zUpperLimit,
                         zDownLimit, LocalBasisFunctions[i],
                         LocalBasisFunctions[j]);
+                MassMatrix[j, i] = MassMatrix[i, j];
             }
         }
     }
