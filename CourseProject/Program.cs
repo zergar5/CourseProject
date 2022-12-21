@@ -32,7 +32,8 @@ var globalMatrix = new GlobalMatrix(adjacencyList);
 var globalVector = new GlobalVector(globalMatrix.N);
 
 var nodeFinder = new NodeFinder(grid);
-var pComponentsProvider = new PComponentsProvider((r, z) => r * z, nodeFinder);
+var pComponentsProvider =
+    new PComponentsProvider((r, z) => r - 1 / r, nodeFinder);
 
 foreach (var element in grid)
 {
@@ -43,6 +44,9 @@ foreach (var element in grid)
     globalMatrix.PlaceLocalMatrix(element.LocalMatrixA, element.GlobalNodesNumbers);
     globalVector.PlaceLocalVector(element.RightPart, element.GlobalNodesNumbers);
 }
+
+//globalVector = new GlobalVector(new[] { 6.3333333333333333333, 31.333333333333333333, 27.6666666666666666, 12.66666666666666666, 62.6666666666666666666, 55.3333333333333333333, 6.3333333333333333333, 31.3333333333333333333333, 27.6666666666666666 });
+//globalVector = new GlobalVector(new [] { 6.3333333333333333333, 10.3333333333333333333, 6.3333333333333333333, 10.3333333333333333333 });
 
 boundaryConditionI.ReadFirstCondition("FirstBoundaryCondition.txt", out var globalNodesNumbersList1, out var usList1);
 boundaryConditionI.ReadSecondCondition("SecondBoundaryCondition.txt", out var globalNodesNumbersList2, out var thetasList);
@@ -63,26 +67,26 @@ for (var i = 0; i < firstBoundaryConditionArray.Length; i++)
 for (var i = 0; i < secondBoundaryConditionArray.Length; i++)
 {
     secondBoundaryConditionArray[i] =
-        boundaryConditionsFactory.CreateSecondBoundaryCondition(globalNodesNumbersList1[i], thetasList[i]);
+        boundaryConditionsFactory.CreateSecondBoundaryCondition(globalNodesNumbersList2[i], thetasList[i]);
 }
 
-for (var i = 0; i < thirdBoundaryConditionArray.Length; i++)
-{
-    thirdBoundaryConditionArray[i] =
-        boundaryConditionsFactory.CreateThirdBoundaryCondition(globalNodesNumbersList1[i], betasList[i], usList2[i]);
-}
+//for (var i = 0; i < thirdBoundaryConditionArray.Length; i++)
+//{
+//    thirdBoundaryConditionArray[i] =
+//        boundaryConditionsFactory.CreateThirdBoundaryCondition(globalNodesNumbersList3[i], betasList[i], usList2[i]);
+//}
 
 var boundaryConditionsApplicator = new BoundaryConditionsApplicator();
 
-foreach (var secondBoundaryCondition in secondBoundaryConditionArray)
-{
-    boundaryConditionsApplicator.ApplySecondCondition(globalVector, secondBoundaryCondition);
-}
+//foreach (var secondBoundaryCondition in secondBoundaryConditionArray)
+//{
+//    boundaryConditionsApplicator.ApplySecondCondition(globalVector, secondBoundaryCondition);
+//}
 
-foreach (var thirdBoundaryCondition in thirdBoundaryConditionArray)
-{
-    boundaryConditionsApplicator.ApplyThirdCondition(globalMatrix, globalVector, thirdBoundaryCondition);
-}
+//foreach (var thirdBoundaryCondition in thirdBoundaryConditionArray)
+//{
+//    boundaryConditionsApplicator.ApplyThirdCondition(globalMatrix, globalVector, thirdBoundaryCondition);
+//}
 
 foreach (var firstBoundaryCondition in firstBoundaryConditionArray)
 {
@@ -96,9 +100,13 @@ var choleskyMCG = new CholeskyMCG();
 
 var qVector = choleskyMCG.Solve(globalMatrix, startVector, globalVector, eps, maxIter);
 
-var node = nodeI.ReadNodeFromConsole();
-
 var solutionFinder = new SolutionFinder(grid, qVector, nodeFinder);
-var result = solutionFinder.FindSolution(node);
 
-CourseHolder.WriteSolution(node, result);
+while (true)
+{
+    var node = nodeI.ReadNodeFromConsole();
+
+    var result = solutionFinder.FindSolution(node);
+
+    CourseHolder.WriteSolution(node, result);
+}

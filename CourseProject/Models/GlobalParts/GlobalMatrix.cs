@@ -17,7 +17,7 @@ public class GlobalMatrix
     {
         var list = adjacencyList.List;
         N = list.Count;
-        DI = new double[list.Count + 1];
+        DI = new double[list.Count];
         JG = list.SelectMany(nodeList => nodeList).ToArray();
         GG = new double[JG.Length];
         var amount = 0;

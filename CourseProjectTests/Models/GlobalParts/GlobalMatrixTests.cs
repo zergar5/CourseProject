@@ -53,7 +53,7 @@ public class GlobalMatrixTests
         _globalMatrix = new GlobalMatrix(_adjacencyList);
     }
 
-    [TestCase(20, 10)]
+    [TestCase(20, 9)]
     public void GlobalMatrixConstructorTest(int actualGGLenght, int actualDILenght)
     {
         var actualGlobalMatrixIG = new[] { 0, 0, 1, 2, 4, 8, 11, 13, 17, 20 };

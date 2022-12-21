@@ -41,7 +41,7 @@ public class SLAESolver
         var gg = sparseMatrix.GG;
         var di = sparseMatrix.DI;
 
-        var x = (GlobalVector)y.Clone();
+        var x = y;
 
         for (var i = n - 1; i >= 0; i--)
         {

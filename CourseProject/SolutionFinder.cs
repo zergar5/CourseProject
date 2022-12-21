@@ -23,9 +23,9 @@ public class SolutionFinder
         foreach (var element in _grid)
         {
             if (!CheckInside(element, node)) continue;
+            var i = 0;
             foreach (var globalNodeNumber in element)
             {
-                var i = 0;
                 if (_nodeFinder.FindNode(globalNodeNumber).Equals(node))
                 {
                     result = _globalVector[globalNodeNumber];
@@ -34,6 +34,7 @@ public class SolutionFinder
                 result += element.LocalBasisFunctions[i++].CalcFunction(node.R, node.Z) *
                           _globalVector[globalNodeNumber];
             }
+            return result;
         }
         return result;
     }
