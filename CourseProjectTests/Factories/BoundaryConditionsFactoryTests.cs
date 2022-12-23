@@ -48,7 +48,7 @@ public class BoundaryConditionFactoryTests
         _numberByHeight = 2;
         _grid = _gridFactory.CreateGrid(_cornerNodes, _numberByWidth, _numberByHeight);
         _nodeFinder = new NodeFinder(_grid);
-        _boundaryConditionFactory = new BoundaryConditionFactory(_nodeFinder);
+        _boundaryConditionFactory = new BoundaryConditionFactory();
     }
 
     [Test]
@@ -75,11 +75,10 @@ public class BoundaryConditionFactoryTests
 
         var expectedSecondBoundaryCondition =
             _boundaryConditionFactory.CreateSecondBoundaryCondition(globalNodesNumbers, thetas);
-        var actualSecondBoundaryCondition = new SecondBoundaryCondition(globalNodesNumbers, thetas, 2.0);
+        var actualSecondBoundaryCondition = new SecondBoundaryCondition(globalNodesNumbers, thetas);
 
         CollectionAssert.AreEqual(expectedSecondBoundaryCondition.GlobalNodesNumbers, actualSecondBoundaryCondition.GlobalNodesNumbers);
         CollectionAssert.AreEqual(expectedSecondBoundaryCondition.Thetas, actualSecondBoundaryCondition.Thetas);
-        Assert.That(expectedSecondBoundaryCondition.H, Is.EqualTo(actualSecondBoundaryCondition.H));
     }
 
     [Test]
@@ -93,11 +92,10 @@ public class BoundaryConditionFactoryTests
 
         var expectedThirdBoundaryCondition =
             _boundaryConditionFactory.CreateThirdBoundaryCondition(globalNodesNumbers, beta, us);
-        var actualThirdBoundaryCondition = new ThirdBoundaryCondition(globalNodesNumbers, beta, us, 2.0);
+        var actualThirdBoundaryCondition = new ThirdBoundaryCondition(globalNodesNumbers, beta, us);
 
         CollectionAssert.AreEqual(expectedThirdBoundaryCondition.GlobalNodesNumbers, actualThirdBoundaryCondition.GlobalNodesNumbers);
         CollectionAssert.AreEqual(expectedThirdBoundaryCondition.Us, actualThirdBoundaryCondition.Us);
         Assert.That(expectedThirdBoundaryCondition.Beta, Is.EqualTo(actualThirdBoundaryCondition.Beta));
-        Assert.That(expectedThirdBoundaryCondition.H, Is.EqualTo(actualThirdBoundaryCondition.H));
     }
 }

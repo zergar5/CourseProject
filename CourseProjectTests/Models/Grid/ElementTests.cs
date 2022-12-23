@@ -58,8 +58,6 @@ public class ElementTests
         _element = _grid.Elements[0];
     }
 
-    //Поменять на сравнение с эпсилоном
-
     [Test]
     public void CalcStiffnessMatrixTest()
     {

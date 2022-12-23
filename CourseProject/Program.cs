@@ -33,7 +33,7 @@ var globalVector = new GlobalVector(globalMatrix.N);
 
 var nodeFinder = new NodeFinder(grid);
 var pComponentsProvider =
-    new PComponentsProvider((r, z) => r - 1 / r, nodeFinder);
+    new PComponentsProvider((r, z) => r - 1/r, nodeFinder);
 
 foreach (var element in grid)
 {
@@ -52,7 +52,7 @@ boundaryConditionI.ReadFirstCondition("FirstBoundaryCondition.txt", out var glob
 boundaryConditionI.ReadSecondCondition("SecondBoundaryCondition.txt", out var globalNodesNumbersList2, out var thetasList);
 boundaryConditionI.ReadThirdCondition("ThirdBoundaryCondition.txt", out var globalNodesNumbersList3, out var betasList, out var usList2);
 
-var boundaryConditionsFactory = new BoundaryConditionFactory(nodeFinder);
+var boundaryConditionsFactory = new BoundaryConditionFactory();
 
 var firstBoundaryConditionArray = new FirstBoundaryCondition[globalNodesNumbersList1.Count];
 var secondBoundaryConditionArray = new SecondBoundaryCondition[globalNodesNumbersList2.Count];
@@ -76,12 +76,12 @@ for (var i = 0; i < secondBoundaryConditionArray.Length; i++)
 //        boundaryConditionsFactory.CreateThirdBoundaryCondition(globalNodesNumbersList3[i], betasList[i], usList2[i]);
 //}
 
-var boundaryConditionsApplicator = new BoundaryConditionsApplicator();
+var boundaryConditionsApplicator = new BoundaryConditionsApplicator(nodeFinder);
 
-//foreach (var secondBoundaryCondition in secondBoundaryConditionArray)
-//{
-//    boundaryConditionsApplicator.ApplySecondCondition(globalVector, secondBoundaryCondition);
-//}
+foreach (var secondBoundaryCondition in secondBoundaryConditionArray)
+{
+    boundaryConditionsApplicator.ApplySecondCondition(globalVector, secondBoundaryCondition);
+}
 
 //foreach (var thirdBoundaryCondition in thirdBoundaryConditionArray)
 //{
@@ -99,6 +99,9 @@ var (eps, maxIter) = parametersI.ReadMethodParameters("MCGParameters.txt");
 var choleskyMCG = new CholeskyMCG();
 
 var qVector = choleskyMCG.Solve(globalMatrix, startVector, globalVector, eps, maxIter);
+
+var globalVectorO = new GlobalVectorIO("../CourseProject/Input/GlobalVectors/");
+globalVectorO.Write("QVector.txt", qVector);
 
 var solutionFinder = new SolutionFinder(grid, qVector, nodeFinder);
 
