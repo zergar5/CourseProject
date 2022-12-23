@@ -25,4 +25,9 @@ public class CourseHolder
     {
         Console.WriteLine($"Function value at the point ({node.R}, {node.Z}) = {result.ToString("0.00000000000000e+00", _culture)}");
     }
+
+    public static void WriteAreaInfo()
+    {
+        Console.WriteLine("Point not in area");
+    }
 }

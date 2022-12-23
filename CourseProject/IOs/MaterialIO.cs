@@ -14,7 +14,7 @@ public class MaterialIO
     public void ReadMaterialsParametersFromFile(string fileName, out List<double[]> lambdasList, out List<double> gammasList)
     {
         using var streamReader = new StreamReader(_path + fileName);
-        var materialsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
+        var materialsParameters = streamReader.ReadToEnd().Replace('.', ',').Split("\r\n");
         lambdasList = new List<double[]>(materialsParameters.Length);
         gammasList = new List<double>(materialsParameters.Length);
         var i = 0;
@@ -29,7 +29,7 @@ public class MaterialIO
     public Material[] ReadMaterialsFromFile(string fileName)
     {
         using var streamReader = new StreamReader(_path + fileName);
-        var materialsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
+        var materialsParameters = streamReader.ReadToEnd().Replace('.', ',').Split("\r\n");
         var materials = new Material[materialsParameters.Length];
         var i = 0;
         foreach (var materialParameters in materialsParameters)

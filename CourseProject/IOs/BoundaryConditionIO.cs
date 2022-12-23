@@ -13,7 +13,7 @@ public class BoundaryConditionIO
     {
         using var streamReader = new StreamReader(_path + fileName);
 
-        var boundaryConditionsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
+        var boundaryConditionsParameters = streamReader.ReadToEnd().Replace('.', ',').Split("\r\n");
         globalNodesNumbersList = new List<int[]>();
         usList = new List<double[]>();
 
@@ -29,9 +29,9 @@ public class BoundaryConditionIO
     {
         using var streamReader = new StreamReader(_path + fileName);
 
-        var boundaryConditionsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
-        globalNodesNumbersList = new List<int[]>(boundaryConditionsParameters.Length);
-        thetasList = new List<double[]>(boundaryConditionsParameters.Length);
+        var boundaryConditionsParameters = streamReader.ReadToEnd().Replace('.', ',').Split("\r\n");
+        globalNodesNumbersList = new List<int[]>();
+        thetasList = new List<double[]>();
 
         foreach (var boundaryConditionParameters in boundaryConditionsParameters)
         {
@@ -45,10 +45,10 @@ public class BoundaryConditionIO
     {
         using var streamReader = new StreamReader(_path + fileName);
 
-        var boundaryConditionsParameters = streamReader.ReadToEnd().Replace("\r", "").Replace('.', ',').Split('\n');
-        globalNodesNumbersList = new List<int[]>(boundaryConditionsParameters.Length);
-        usList = new List<double[]>(boundaryConditionsParameters.Length);
-        betasList = new List<double>(boundaryConditionsParameters.Length);
+        var boundaryConditionsParameters = streamReader.ReadToEnd().Replace('.', ',').Split("\r\n");
+        globalNodesNumbersList = new List<int[]>();
+        usList = new List<double[]>();
+        betasList = new List<double>();
 
         foreach (var boundaryConditionParameters in boundaryConditionsParameters)
         {

@@ -100,7 +100,7 @@ var choleskyMCG = new CholeskyMCG();
 
 var qVector = choleskyMCG.Solve(globalMatrix, startVector, globalVector, eps, maxIter);
 
-var globalVectorO = new GlobalVectorIO("../CourseProject/Input/GlobalVectors/");
+var globalVectorO = new GlobalVectorIO("../CourseProject/Output/GlobalVectors/");
 globalVectorO.Write("QVector.txt", qVector);
 
 var solutionFinder = new SolutionFinder(grid, qVector, nodeFinder);
@@ -109,7 +109,14 @@ while (true)
 {
     var node = nodeI.ReadNodeFromConsole();
 
-    var result = solutionFinder.FindSolution(node);
+    if (solutionFinder.CheckArea(node))
+    {
+        var result = solutionFinder.FindSolution(node);
 
-    CourseHolder.WriteSolution(node, result);
+        CourseHolder.WriteSolution(node, result);
+    }
+    else
+    {
+        CourseHolder.WriteAreaInfo();
+    }
 }
