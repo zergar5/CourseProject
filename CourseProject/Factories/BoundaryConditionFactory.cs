@@ -1,6 +1,4 @@
 ﻿using CourseProject.Models.BoundaryConditions;
-using CourseProject.Models.Grid;
-using CourseProject.Tools;
 
 namespace CourseProject.Factories;
 

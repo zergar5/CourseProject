@@ -1,7 +1,6 @@
 ﻿using CourseProject.Models.GlobalParts;
 using CourseProject.Models.Grid;
 using CourseProject.Tools;
-using System.Xml.Linq;
 
 namespace CourseProject;
 
@@ -52,7 +51,7 @@ public class SolutionFinder
     {
         var leftCornerNode = _grid.CornerNodes[0];
         var rightCornerNode = _grid.CornerNodes[1];
-        return node.R > leftCornerNode.R && node.Z > leftCornerNode.Z &&
-               node.R < rightCornerNode.R && node.Z < rightCornerNode.Z;
+        return node.R >= leftCornerNode.R && node.Z >= leftCornerNode.Z &&
+               node.R <= rightCornerNode.R && node.Z <= rightCornerNode.Z;
     }
 }

@@ -143,7 +143,7 @@ public class BoundaryConditionsApplicatorTests
             JG = new[] { 0, 0, 1, 2 },
             GG = new[] { 5.0, 5.0, 5.0, 7.0 }
         };
-        var actualGlobalVector = new GlobalVector(new[] { 5.0, 5.0, 10.333333333333332, 35.0/3.0});
+        var actualGlobalVector = new GlobalVector(new[] { 5.0, 5.0, 10.333333333333332, 35.0/3.0 });
 
         CollectionAssert.AreEqual(_globalMatrix.DI, actualGlobalMatrix.DI);
         CollectionAssert.AreEqual(_globalMatrix.GG, actualGlobalMatrix.GG);

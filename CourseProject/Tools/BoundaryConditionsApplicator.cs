@@ -1,6 +1,5 @@
 ﻿using CourseProject.Models.BoundaryConditions;
 using CourseProject.Models.GlobalParts;
-using CourseProject.Models.Grid;
 using CourseProject.Models.LocalParts;
 
 namespace CourseProject.Tools;
