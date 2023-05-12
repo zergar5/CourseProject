@@ -1,5 +1,5 @@
-﻿using CourseProject.Models.LocalParts;
-using CourseProject.Tools.Calculators;
+﻿using CourseProject.Calculus;
+using CourseProject.Models.LocalParts;
 using CourseProject.Tools.Providers;
 
 namespace CourseProjectTests.Calculators;

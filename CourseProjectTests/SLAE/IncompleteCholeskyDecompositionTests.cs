@@ -1,5 +1,4 @@
 ﻿using CourseProject.Models.GlobalParts;
-using CourseProject.SLAESolution;
 
 namespace CourseProjectTests.SLAE;
 
@@ -12,9 +11,9 @@ public class IncompleteCholeskyDecompositionTests
         _globalMatrix = new GlobalMatrix
         {
             N = 5,
-            IG = new[] { 0, 0, 0, 2, 5, 6 },
-            JG = new[] { 0, 1, 0, 1, 2, 3 },
-            DI = new[] { 2.0, 2.0, 2.0, 2.0, 2.0 },
+            IG = new[] { 0, 0, 0, 1, 3, 6 },
+            JG = new[] { 0, 0, 1, 0, 1, 2 },
+            DI = new[] { 10.0, 10.0, 10.0, 10.0, 10.0 },
             GG = new[] { 1.0, 1.0, 1.0, 1.0, 1.0, 1.0 },
         };
     }

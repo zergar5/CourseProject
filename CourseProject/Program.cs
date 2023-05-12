@@ -1,10 +1,9 @@
-﻿using CourseProject;
-using CourseProject.Factories;
+﻿using CourseProject.Factories;
 using CourseProject.IOs;
 using CourseProject.Models.BoundaryConditions;
 using CourseProject.Models.GlobalParts;
 using CourseProject.Models.Grid;
-using CourseProject.SLAESolution;
+using CourseProject.SLAE.Solvers;
 using CourseProject.Tools;
 using CourseProject.Tools.Providers;
 

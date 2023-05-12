@@ -1,5 +1,4 @@
 ﻿using CourseProject.Models.GlobalParts;
-using CourseProject.Tools.Calculators;
 
 namespace CourseProjectTests.Calculators;
 

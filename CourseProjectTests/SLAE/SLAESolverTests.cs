@@ -1,5 +1,5 @@
 ﻿using CourseProject.Models.GlobalParts;
-using CourseProject.SLAESolution;
+using CourseProject.SLAE.Solvers;
 
 namespace CourseProjectTests.SLAE;
 
