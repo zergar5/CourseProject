@@ -1,19 +1,23 @@
-﻿using CourseProject.TwoDimensional.Parameters;
+﻿using CourseProject.Core;
+using CourseProject.Core.Base;
+using CourseProject.Core.Boundary;
+using CourseProject.Core.Global;
+using CourseProject.Core.GridComponents;
+using CourseProject.Core.Local;
+using CourseProject.TwoDimensional.Parameters;
 
 namespace CourseProject.TwoDimensional.Assembling.Boundary;
 
 public class SecondBoundaryProvider
 {
-    public readonly Grid<Node3D> Grid;
+    public readonly Grid<Node2D> Grid;
     public readonly MaterialFactory MaterialFactory;
-    private readonly BaseMatrix _templateMatrix;
     private List<SecondCondition> _conditions = new();
 
-    public SecondBoundaryProvider(Grid<Node3D> grid, MaterialFactory materialFactory, ITemplateMatrixProvider templateMatrixProvider)
+    public SecondBoundaryProvider(Grid<Node2D> grid, MaterialFactory materialFactory)
     {
         Grid = grid;
         MaterialFactory = materialFactory;
-        _templateMatrix = templateMatrixProvider.GetMatrix();
     }
 
     public SecondCondition[] GetConditions()
@@ -24,24 +28,30 @@ public class SecondBoundaryProvider
     }
 
     public SecondBoundaryProvider CreateConditions(int[] elementsIndexes, Bound[] bounds,
-        Func<Node3D, double> uS, Func<Node3D, double> uC)
+        Func<Node2D, double> uDerivative)
     {
         var conditions = new List<SecondCondition>(elementsIndexes.Length);
 
         for (var i = 0; i < elementsIndexes.Length; i++)
         {
-            var (indexes, hs) = Grid.Elements[elementsIndexes[i]].GetBoundNodeIndexes(bounds[i]);
+            var (indexes, h) = Grid.Elements[elementsIndexes[i]].GetBoundNodeIndexes(bounds[i]);
 
-            var matrix = GetMatrix(hs[0], hs[1]);
+            BaseVector vector;
+
+            if (bounds[i] == Bound.Lower || bounds[i] == Bound.Upper)
+            {
+                vector = GetRVector(indexes, h, uDerivative);
+            }
+            else
+            {
+                vector = GetZVector(indexes, h, uDerivative);
+            }
 
             var material = MaterialFactory.GetById(Grid.Elements[elementsIndexes[i]].MaterialId);
 
-            var vector = GetVector(indexes, uS, uC);
-            vector = matrix * BaseVector.Multiply(material.Lambda, vector);
+            BaseVector.Multiply(material.Lambdas, vector);
 
-            var complexIndexes = GetComplexIndexes(indexes);
-
-            conditions.Add(new SecondCondition(new LocalVector(complexIndexes, vector)));
+            conditions.Add(new SecondCondition(new LocalVector(indexes, vector)));
         }
 
         _conditions.AddRange(conditions);
@@ -49,33 +59,22 @@ public class SecondBoundaryProvider
         return this;
     }
 
-    public BaseMatrix GetMatrix(double h1, double h2)
+    private BaseVector GetRVector(int[] indexes, double h, Func<Node2D, double> uDerivative)
     {
-        return h1 * h2 / 36d * _templateMatrix;
+        var vector = new BaseVector(indexes.Length)
+        {
+            [0] = 2d * uDerivative(Grid.Nodes[indexes[0]]) + uDerivative(Grid.Nodes[indexes[1]]),
+            [1] = uDerivative(Grid.Nodes[indexes[0]]) + 2d * uDerivative(Grid.Nodes[indexes[1]])
+        };
+
+        BaseVector.Multiply(h * Grid.Nodes[indexes[0]].X / 6.0, vector);
+
+        return vector;
     }
 
-    public int[] GetComplexIndexes(int[] indexes)
+    private BaseVector GetZVector(int[] indexes, double h, Func<Node2D, double> uDerivative)
     {
-        var complexIndexes = new int[indexes.Length * 2];
-
-        for (var i = 0; i < indexes.Length; i++)
-        {
-            complexIndexes[i * 2] = indexes[i] * 2;
-            complexIndexes[i * 2 + 1] = indexes[i] * 2 + 1;
-        }
-
-        return complexIndexes;
-    }
-
-    private BaseVector GetVector(int[] indexes, Func<Node3D, double> uS, Func<Node3D, double> uC)
-    {
-        var vector = new BaseVector(indexes.Length * 2);
-
-        for (var i = 0; i < indexes.Length; i++)
-        {
-            vector[i * 2] = uS(Grid.Nodes[indexes[i]]);
-            vector[i * 2 + 1] = uC(Grid.Nodes[indexes[i]]);
-        }
+        var vector = new BaseVector(indexes.Length);
 
         return vector;
     }

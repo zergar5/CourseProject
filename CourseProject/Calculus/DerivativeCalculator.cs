@@ -11,11 +11,11 @@ public class DerivativeCalculator
         double result;
         if (variableChar == 'r')
         {
-            result = (localBasisFunction.CalcFunction(r + Delta, z) - localBasisFunction.CalcFunction(r - Delta, z)) / (2.0 * Delta);
+            result = (localBasisFunction.Calculate(r + Delta, z) - localBasisFunction.Calculate(r - Delta, z)) / (2.0 * Delta);
         }
         else
         {
-            result = (localBasisFunction.CalcFunction(r, z + Delta) - localBasisFunction.CalcFunction(r, z - Delta)) / (2.0 * Delta);
+            result = (localBasisFunction.Calculate(r, z + Delta) - localBasisFunction.Calculate(r, z - Delta)) / (2.0 * Delta);
         }
         return result;
     }

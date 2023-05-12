@@ -1,4 +1,7 @@
-﻿namespace CourseProject.FEM.Assembling.Global;
+﻿using CourseProject.Core.Boundary;
+using CourseProject.Core.Global;
+
+namespace CourseProject.FEM.Assembling.Global;
 
 public interface IGaussExcluder<TMatrix>
 {

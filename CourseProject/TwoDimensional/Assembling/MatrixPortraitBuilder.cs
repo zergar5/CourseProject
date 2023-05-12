@@ -1,12 +1,15 @@
-﻿using CourseProject.FEM.Assembling;
+﻿using CourseProject.Core;
+using CourseProject.Core.Global;
+using CourseProject.Core.GridComponents;
+using CourseProject.FEM.Assembling;
 
 namespace CourseProject.TwoDimensional.Assembling;
 
-public class MatrixPortraitBuilder : IMatrixPortraitBuilder<Node3D, SparseMatrix>
+public class MatrixPortraitBuilder : IMatrixPortraitBuilder<Node2D, SymmetricSparseMatrix>
 {
     private List<SortedSet<int>> _adjacencyList = null!;
 
-    public SparseMatrix Build(Grid<Node3D> grid)
+    public SymmetricSparseMatrix Build(Grid<Node2D> grid)
     {
         BuildAdjacencyList(grid);
 
@@ -17,14 +20,14 @@ public class MatrixPortraitBuilder : IMatrixPortraitBuilder<Node3D, SparseMatrix
         var rowsIndexes = buf.ToArray();
         var columnsIndexes = _adjacencyList.SelectMany(nodeList => nodeList).ToArray();
 
-        return new SparseMatrix(rowsIndexes, columnsIndexes);
+        return new SymmetricSparseMatrix(rowsIndexes, columnsIndexes);
     }
 
-    private void BuildAdjacencyList(Grid<Node3D> grid)
+    private void BuildAdjacencyList(Grid<Node2D> grid)
     {
-        _adjacencyList = new List<SortedSet<int>>(grid.Nodes.Length * 2);
+        _adjacencyList = new List<SortedSet<int>>(grid.Nodes.Length);
 
-        for (var i = 0; i < grid.Nodes.Length * 2; i++)
+        for (var i = 0; i < grid.Nodes.Length; i++)
         {
             _adjacencyList.Add(new SortedSet<int>());
         }
@@ -35,19 +38,9 @@ public class MatrixPortraitBuilder : IMatrixPortraitBuilder<Node3D, SparseMatrix
 
             foreach (var currentNode in nodesIndexes)
             {
-                for (var i = 0; i < 2; i++)
+                foreach (var nodeIndex in nodesIndexes)
                 {
-                    var currentComplexNode = currentNode * 2 + i;
-
-                    foreach (var nodeIndex in nodesIndexes)
-                    {
-                        for (var j = 0; j < 2; j++)
-                        {
-                            var complexNodeIndex = nodeIndex * 2 + j;
-                            if (currentComplexNode > complexNodeIndex)
-                                _adjacencyList[currentComplexNode].Add(complexNodeIndex);
-                        }
-                    }
+                    if (currentNode > nodeIndex) _adjacencyList[currentNode].Add(nodeIndex);
                 }
             }
         }

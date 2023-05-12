@@ -1,4 +1,6 @@
-﻿namespace CourseProject.FEM;
+﻿using CourseProject.Core.GridComponents;
+
+namespace CourseProject.FEM;
 
 public class CourseHolder
 {
@@ -7,9 +9,9 @@ public class CourseHolder
         Console.Write($"Iteration: {iteration}, residual: {residual:E14}                                   \r");
     }
 
-    public static void WriteSolution(Node3D point, double sValue, double cValue)
+    public static void WriteSolution(Node2D point, double sValue)
     {
-        Console.WriteLine($"({point.X},{point.Y},{point.Z}) {sValue:E14} {cValue:E14}");
+        Console.WriteLine($"({point.X},{point.Y}) {sValue:E14}");
     }
 
     public static void WriteAreaInfo()

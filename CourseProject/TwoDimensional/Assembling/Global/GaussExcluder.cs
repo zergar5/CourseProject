@@ -1,10 +1,12 @@
-﻿using CourseProject.FEM.Assembling.Global;
+﻿using CourseProject.Core.Boundary;
+using CourseProject.Core.Global;
+using CourseProject.FEM.Assembling.Global;
 
 namespace CourseProject.TwoDimensional.Assembling.Global;
 
-public class GaussExcluder : IGaussExcluder<SparseMatrix>
+public class GaussExcluder : IGaussExcluder<SymmetricSparseMatrix>
 {
-    public void Exclude(Equation<SparseMatrix> equation, FirstCondition condition)
+    public void Exclude(Equation<SymmetricSparseMatrix> equation, FirstCondition condition)
     {
         for (var i = 0; i < condition.Values.Length; i++)
         {
@@ -15,7 +17,8 @@ public class GaussExcluder : IGaussExcluder<SparseMatrix>
                  j < equation.Matrix.RowsIndexes[condition.NodesIndexes[i] + 1];
                  j++)
             {
-                equation.Matrix.LowerValues[j] = 0d;
+                equation.RightSide[equation.Matrix.ColumnsIndexes[j]] -= equation.Matrix.Values[j] * condition.Values[i];
+                equation.Matrix.Values[j] = 0d;
             }
 
             for (var j = condition.NodesIndexes[i] + 1; j < equation.Matrix.CountRows; j++)
@@ -23,7 +26,9 @@ public class GaussExcluder : IGaussExcluder<SparseMatrix>
                 var elementIndex = equation.Matrix[j, condition.NodesIndexes[i]];
 
                 if (elementIndex == -1) continue;
-                equation.Matrix.UpperValues[elementIndex] = 0;
+
+                equation.RightSide[j] -= equation.Matrix.Values[elementIndex] * condition.Values[i];
+                equation.Matrix.Values[elementIndex] = 0d;
             }
         }
     }

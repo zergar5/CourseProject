@@ -1,16 +1,18 @@
-﻿namespace CourseProject.TwoDimensional.Assembling.Boundary;
+﻿using CourseProject.Core;
+using CourseProject.Core.Boundary;
+using CourseProject.Core.GridComponents;
+
+namespace CourseProject.TwoDimensional.Assembling.Boundary;
 
 public class FirstBoundaryProvider
 {
-    private readonly Grid<Node3D> _grid;
-    private readonly Func<Node3D, double> _uS;
-    private readonly Func<Node3D, double> _uC;
+    private readonly Grid<Node2D> _grid;
+    private readonly Func<Node2D, double> _u;
 
-    public FirstBoundaryProvider(Grid<Node3D> grid, Func<Node3D, double> uS, Func<Node3D, double> uC)
+    public FirstBoundaryProvider(Grid<Node2D> grid, Func<Node2D, double> u)
     {
         _grid = grid;
-        _uS = uS;
-        _uC = uC;
+        _u = u;
     }
 
     public FirstCondition[] GetConditions(int[] elementsIndexes, Bound[] bounds)
@@ -21,16 +23,14 @@ public class FirstBoundaryProvider
         {
             var (indexes, _) = _grid.Elements[elementsIndexes[i]].GetBoundNodeIndexes(bounds[i]);
 
-            var complexIndexes = GetComplexIndexes(indexes);
-            var values = new double[complexIndexes.Length];
+            var values = new double[indexes.Length];
 
             for (var j = 0; j < indexes.Length; j++)
             {
-                values[j * 2] = _uS(_grid.Nodes[indexes[j]]);
-                values[j * 2 + 1] = _uC(_grid.Nodes[indexes[j]]);
+                values[j] = Calculate(indexes[j]);
             }
 
-            conditions.Add(new FirstCondition(complexIndexes, values));
+            conditions.Add(new FirstCondition(indexes, values));
         }
 
         return conditions.ToArray();
@@ -41,77 +41,59 @@ public class FirstBoundaryProvider
         var elementsIndexes = new List<int>();
         var bounds = new List<Bound>();
 
-        for (var i = 0; i < elementsByLength * elementsByWidth; i++)
-        {
-            elementsIndexes.Add(i);
-            bounds.Add(Bound.Lower);
-        }
+        //for (var i = 0; i < elementsByLength * elementsByWidth; i++)
+        //{
+        //    elementsIndexes.Add(i);
+        //    bounds.Add(Bound.Lower);
+        //}
 
-        for (var i = 0; i < elementsByHeight; i++)
-        {
-            for (var j = 0; j < elementsByLength; j++)
-            {
-                elementsIndexes.Add(i * elementsByWidth * elementsByLength + j);
-                bounds.Add(Bound.Front);
-            }
-        }
+        //for (var i = 0; i < elementsByHeight; i++)
+        //{
+        //    for (var j = 0; j < elementsByLength; j++)
+        //    {
+        //        elementsIndexes.Add(i * elementsByWidth * elementsByLength + j);
+        //        bounds.Add(Bound.Front);
+        //    }
+        //}
 
-        for (var i = 0; i < elementsByHeight; i++)
-        {
-            for (var j = 0; j < elementsByWidth; j++)
-            {
-                elementsIndexes.Add(i * elementsByWidth * elementsByLength + j * elementsByLength + (elementsByWidth - 1));
-                bounds.Add(Bound.Right);
-            }
-        }
+        //for (var i = 0; i < elementsByHeight; i++)
+        //{
+        //    for (var j = 0; j < elementsByWidth; j++)
+        //    {
+        //        elementsIndexes.Add(i * elementsByWidth * elementsByLength + j * elementsByLength + (elementsByWidth - 1));
+        //        bounds.Add(Bound.Right);
+        //    }
+        //}
 
-        for (var i = 0; i < elementsByHeight; i++)
-        {
-            for (var j = 0; j < elementsByWidth; j++)
-            {
-                elementsIndexes.Add(i * elementsByWidth * elementsByLength + j * elementsByLength);
-                bounds.Add(Bound.Left);
-            }
-        }
+        //for (var i = 0; i < elementsByHeight; i++)
+        //{
+        //    for (var j = 0; j < elementsByWidth; j++)
+        //    {
+        //        elementsIndexes.Add(i * elementsByWidth * elementsByLength + j * elementsByLength);
+        //        bounds.Add(Bound.Left);
+        //    }
+        //}
 
-        for (var i = 0; i < elementsByHeight; i++)
-        {
-            for (var j = 0; j < elementsByWidth; j++)
-            {
-                elementsIndexes.Add(i * elementsByWidth * elementsByLength + j + elementsByLength * (elementsByWidth - 1));
-                bounds.Add(Bound.Back);
-            }
-        }
+        //for (var i = 0; i < elementsByHeight; i++)
+        //{
+        //    for (var j = 0; j < elementsByWidth; j++)
+        //    {
+        //        elementsIndexes.Add(i * elementsByWidth * elementsByLength + j + elementsByLength * (elementsByWidth - 1));
+        //        bounds.Add(Bound.Back);
+        //    }
+        //}
 
-        for (var i = elementsByWidth * elementsByLength * (elementsByHeight - 1); i < elementsByWidth * elementsByLength * elementsByHeight; i++)
-        {
-            elementsIndexes.Add(i);
-            bounds.Add(Bound.Upper);
-        }
+        //for (var i = elementsByWidth * elementsByLength * (elementsByHeight - 1); i < elementsByWidth * elementsByLength * elementsByHeight; i++)
+        //{
+        //    elementsIndexes.Add(i);
+        //    bounds.Add(Bound.Upper);
+        //}
 
         return GetConditions(elementsIndexes.ToArray(), bounds.ToArray());
     }
 
-    public double GetSValue(int index)
+    public double Calculate(int index)
     {
-        return _uS(_grid.Nodes[index]);
-    }
-
-    public double GetCValue(int index)
-    {
-        return _uC(_grid.Nodes[index]);
-    }
-
-    private int[] GetComplexIndexes(int[] indexes)
-    {
-        var complexIndexes = new int[indexes.Length * 2];
-
-        for (var i = 0; i < indexes.Length; i++)
-        {
-            complexIndexes[i * 2] = indexes[i] * 2;
-            complexIndexes[i * 2 + 1] = indexes[i] * 2 + 1;
-        }
-
-        return complexIndexes;
+        return _u(_grid.Nodes[index]);
     }
 }

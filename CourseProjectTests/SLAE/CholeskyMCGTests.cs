@@ -5,7 +5,7 @@ namespace CourseProjectTests.SLAE;
 
 public class CholeskyMCGTests
 {
-    private CholeskyMCG _choleskyMcg;
+    private MCG _choleskyMcg;
     private GlobalMatrix _globalMatrix;
     private GlobalVector _startGlobalVector;
     private GlobalVector _bGlobalVector;
@@ -13,7 +13,7 @@ public class CholeskyMCGTests
     [SetUp]
     public void Setup()
     {
-        _choleskyMcg = new CholeskyMCG();
+        _choleskyMcg = new MCG();
 
         _globalMatrix = new GlobalMatrix
         {

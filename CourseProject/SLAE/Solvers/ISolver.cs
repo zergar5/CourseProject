@@ -1,4 +1,6 @@
-﻿namespace CourseProject.SLAE.Solvers;
+﻿using CourseProject.Core.Global;
+
+namespace CourseProject.SLAE.Solvers;
 
 public interface ISolver<TMatrix>
 {

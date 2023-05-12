@@ -1,10 +1,9 @@
 ﻿namespace CourseProject.Core.Global;
 
-public class SparseMatrix
+public class SymmetricSparseMatrix
 {
     public double[] Diagonal { get; set; }
-    public double[] LowerValues { get; set; }
-    public double[] UpperValues { get; set; }
+    public double[] Values { get; set; }
     public int[] RowsIndexes { get; }
     public int[] ColumnsIndexes { get; }
 
@@ -14,38 +13,34 @@ public class SparseMatrix
         Array.IndexOf(ColumnsIndexes, columnIndex, RowsIndexes[rowIndex],
             RowsIndexes[rowIndex + 1] - RowsIndexes[rowIndex]);
 
-    public SparseMatrix(int[] rowsIndexes, int[] columnsIndexes)
+    public SymmetricSparseMatrix(int[] rowsIndexes, int[] columnsIndexes)
     {
         Diagonal = new double[rowsIndexes.Length - 1];
-        LowerValues = new double[rowsIndexes[^1]];
-        UpperValues = new double[rowsIndexes[^1]];
+        Values = new double[rowsIndexes[^1]];
         RowsIndexes = rowsIndexes;
         ColumnsIndexes = columnsIndexes;
     }
 
-    public SparseMatrix
+    public SymmetricSparseMatrix
     (
         int[] rowsIndexes,
         int[] columnsIndexes,
         double[] diagonal,
-        double[] lowerValues,
-        double[] upperValues
+        double[] values
     )
     {
         RowsIndexes = rowsIndexes;
         ColumnsIndexes = columnsIndexes;
         Diagonal = diagonal;
-        LowerValues = lowerValues;
-        UpperValues = upperValues;
+        Values = values;
     }
 
-    public static GlobalVector operator *(SparseMatrix matrix, GlobalVector vector)
+    public static GlobalVector operator *(SymmetricSparseMatrix matrix, GlobalVector vector)
     {
         var rowsIndexes = matrix.RowsIndexes;
         var columnsIndexes = matrix.ColumnsIndexes;
         var di = matrix.Diagonal;
-        var lowerValues = matrix.LowerValues;
-        var upperValues = matrix.UpperValues;
+        var values = matrix.Values;
 
         var result = new GlobalVector(matrix.CountRows);
 
@@ -55,29 +50,27 @@ public class SparseMatrix
 
             for (var j = rowsIndexes[i]; j < rowsIndexes[i + 1]; j++)
             {
-                result[i] += lowerValues[j] * vector[columnsIndexes[j]];
-                result[columnsIndexes[j]] += upperValues[j] * vector[i];
+                result[i] += values[j] * vector[columnsIndexes[j]];
+                result[columnsIndexes[j]] += values[j] * vector[i];
             }
         }
 
         return result;
     }
 
-    public SparseMatrix Clone()
+    public SymmetricSparseMatrix Clone()
     {
         var rowIndexes = new int[RowsIndexes.Length];
         var columnIndexes = new int[ColumnsIndexes.Length];
         var diagonal = new double[Diagonal.Length];
-        var lowerValues = new double[LowerValues.Length];
-        var upperValues = new double[UpperValues.Length];
+        var values = new double[Values.Length];
 
         Array.Copy(RowsIndexes, rowIndexes, RowsIndexes.Length);
         Array.Copy(ColumnsIndexes, columnIndexes, ColumnsIndexes.Length);
         Array.Copy(Diagonal, diagonal, Diagonal.Length);
-        Array.Copy(LowerValues, lowerValues, LowerValues.Length);
-        Array.Copy(UpperValues, upperValues, UpperValues.Length);
+        Array.Copy(Values, values, Values.Length);
 
-        return new SparseMatrix(rowIndexes, columnIndexes, diagonal, lowerValues, upperValues);
+        return new SymmetricSparseMatrix(rowIndexes, columnIndexes, diagonal, values);
     }
 
     public int[] CloneRows()

@@ -1,4 +1,7 @@
-﻿using CourseProject.FEM.Assembling;
+﻿using CourseProject.Core;
+using CourseProject.Core.Boundary;
+using CourseProject.Core.Global;
+using CourseProject.FEM.Assembling;
 using CourseProject.FEM.Assembling.Global;
 using CourseProject.FEM.Assembling.Local;
 

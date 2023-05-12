@@ -92,7 +92,7 @@ foreach (var firstBoundaryCondition in firstBoundaryConditionArray)
 var startVector = globalVectorI.Read("StartVector.txt");
 var (eps, maxIter) = parametersI.ReadMethodParameters("MCGParameters.txt");
 
-var choleskyMCG = new CholeskyMCG();
+var choleskyMCG = new MCG();
 
 var qVector = choleskyMCG.Solve(globalMatrix, startVector, globalVector, eps, maxIter);
 

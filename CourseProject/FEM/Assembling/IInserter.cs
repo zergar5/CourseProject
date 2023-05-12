@@ -1,4 +1,7 @@
-﻿namespace CourseProject.FEM.Assembling;
+﻿using CourseProject.Core.Global;
+using CourseProject.Core.Local;
+
+namespace CourseProject.FEM.Assembling;
 
 public interface IInserter<in TMatrix>
 {

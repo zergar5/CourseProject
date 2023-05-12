@@ -1,6 +1,6 @@
 ﻿namespace CourseProject.SLAE.Preconditions;
 
-public interface IPreconditioner<out TResult>
+public interface IPreconditioner<TMatrix>
 {
-    public TResult Decompose(SparseMatrix globalMatrix);
+    public TMatrix Decompose(TMatrix globalMatrix);
 }

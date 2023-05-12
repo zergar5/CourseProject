@@ -1,10 +1,12 @@
-﻿using CourseProject.FEM.Assembling;
+﻿using CourseProject.Core.Global;
+using CourseProject.Core.Local;
+using CourseProject.FEM.Assembling;
 
 namespace CourseProject.TwoDimensional.Assembling;
 
-public class Inserter : IInserter<SparseMatrix>
+public class Inserter : IInserter<SymmetricSparseMatrix>
 {
-    public void InsertMatrix(SparseMatrix globalMatrix, LocalMatrix localMatrix)
+    public void InsertMatrix(SymmetricSparseMatrix globalMatrix, LocalMatrix localMatrix)
     {
         var nodesIndexes = localMatrix.Indexes;
 
@@ -15,8 +17,7 @@ public class Inserter : IInserter<SparseMatrix>
                 var elementIndex = globalMatrix[nodesIndexes[i], nodesIndexes[j]];
 
                 if (elementIndex == -1) continue;
-                globalMatrix.LowerValues[elementIndex] += localMatrix[i, j];
-                globalMatrix.UpperValues[elementIndex] += localMatrix[j, i];
+                globalMatrix.Values[elementIndex] += localMatrix[i, j];
             }
 
             globalMatrix.Diagonal[nodesIndexes[i]] += localMatrix[i, i];
