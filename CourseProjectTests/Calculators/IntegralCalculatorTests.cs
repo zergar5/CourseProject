@@ -21,7 +21,7 @@ public class IntegralCalculatorTests
         var localBasisFunction = new LocalBasisFunction(_linearFunctionsProvider.CreateFirstFunction(2.0, 2.0),
             _linearFunctionsProvider.CreateFirstFunction(2.0, 2.0));
         var expected =
-            DoubleIntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(2, 0, 2, 0, localBasisFunction, localBasisFunction,
+            DoubleIntegralCalculator.Calculate(2, 0, 2, 0, localBasisFunction, localBasisFunction,
                 1.0);
         Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
@@ -44,7 +44,7 @@ public class IntegralCalculatorTests
         var localBasisFunctionJ = new LocalBasisFunction(_linearFunctionsProvider.CreateSecondFunction(0.0, 2.0),
             _linearFunctionsProvider.CreateFirstFunction(2.0, 2.0));
         var expected =
-            DoubleIntegralCalculator.CalcDoubleIntegralForStiffnessMatrix(2, 0, 2, 0, localBasisFunctionI, localBasisFunctionJ,
+            DoubleIntegralCalculator.Calculate(2, 0, 2, 0, localBasisFunctionI, localBasisFunctionJ,
                 1.0);
         Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }

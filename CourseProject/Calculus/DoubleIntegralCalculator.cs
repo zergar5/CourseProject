@@ -13,7 +13,7 @@ public class DoubleIntegralCalculator
 
     private const int NumberOfSegments = 512;
 
-    public double CalcDoubleIntegralForStiffnessMatrix(Interval rInterval, Interval zInterval, Func<double, double, double> function)
+    public double Calculate(Interval rInterval, Interval zInterval, Func<double, double, double> function)
     {
         var hr = rInterval.Length / NumberOfSegments;
         var hz = zInterval.Length / NumberOfSegments;
@@ -37,7 +37,7 @@ public class DoubleIntegralCalculator
                     {
                         var zJ = (zInterval.Begin + z * hz + zInterval.Begin + (z + 1) * hz) / 2.0 + _interpolationNodes[j] * hz / 2.0;
 
-                        sumOfInnerIntegral += hz * rI * function(rI, zJ);
+                        sumOfInnerIntegral += hz * function(rI, zJ);
                     }
 
                     innerIntegralValue += sumOfInnerIntegral * _weights[j] / 2.0;

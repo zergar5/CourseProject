@@ -1,4 +1,6 @@
-﻿namespace CourseProject.FEM.Assembling;
+﻿using CourseProject.Core;
+
+namespace CourseProject.FEM.Assembling;
 
 public interface IMatrixPortraitBuilder<TNode, out TMatrix>
 {

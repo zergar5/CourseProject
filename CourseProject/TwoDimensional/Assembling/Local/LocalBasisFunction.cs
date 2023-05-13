@@ -17,4 +17,9 @@ public class LocalBasisFunction
     {
         return _xFunction(node.X) * _yFunction(node.Y);
     }
+
+    public double Calculate(double r, double z)
+    {
+        return _xFunction(r) * _yFunction(z);
+    }
 }

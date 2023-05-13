@@ -7,81 +7,78 @@ using CourseProject.FEM.Assembling.Local;
 
 namespace CourseProject.TwoDimensional.Assembling.Global;
 
-public class GlobalAssembler<TNode, TMatrix>
+public class GlobalAssembler<TNode>
 {
-    private readonly IMatrixPortraitBuilder<TNode, TMatrix> _matrixPortraitBuilder;
+    private readonly IMatrixPortraitBuilder<TNode, SymmetricSparseMatrix> _matrixPortraitBuilder;
     private readonly ILocalAssembler _localAssembler;
-    private readonly IInserter<TMatrix> _inserter;
-    private readonly IGaussExcluder<TMatrix> _gaussExcluder;
-    private Equation<TMatrix> _equation;
+    private readonly IInserter<SymmetricSparseMatrix> _inserter;
+    private Equation<SymmetricSparseMatrix> _equation;
 
     public GlobalAssembler
     (
-        IMatrixPortraitBuilder<TNode, TMatrix> matrixPortraitBuilder,
+        IMatrixPortraitBuilder<TNode, SymmetricSparseMatrix> matrixPortraitBuilder,
         ILocalAssembler localAssembler,
-        IInserter<TMatrix> inserter,
-        IGaussExcluder<TMatrix> gaussExcluder)
+        IInserter<SymmetricSparseMatrix> inserter
+    )
     {
         _matrixPortraitBuilder = matrixPortraitBuilder;
         _localAssembler = localAssembler;
         _inserter = inserter;
-        _gaussExcluder = gaussExcluder;
     }
 
-    public Equation<TMatrix> BuildEquation()
-    {
-        return _equation;
-    }
-
-    public GlobalAssembler<TNode, TMatrix> AssembleEquation(Grid<TNode> grid)
+    public SymmetricSparseMatrix AssembleStiffnessMatrix(Grid<TNode> grid)
     {
         var globalMatrix = _matrixPortraitBuilder.Build(grid);
-        _equation = new Equation<TMatrix>(
-            globalMatrix,
-            new GlobalVector(grid.Nodes.Length * 2),
-            new GlobalVector(grid.Nodes.Length * 2)
-        );
 
         foreach (var element in grid)
         {
-            var localMatrix = _localAssembler.AssembleMatrix(element);
-            var localVector = _localAssembler.AssembleRightSide(element);
+            var localMatrix = _localAssembler.AssembleStiffnessMatrix(element);
 
             _inserter.InsertMatrix(_equation.Matrix, localMatrix);
-            _inserter.InsertVector(_equation.RightSide, localVector);
         }
 
-        return this;
+        return globalMatrix;
     }
 
-    public GlobalAssembler<TNode, TMatrix> ApplySecondConditions(SecondCondition[] conditions)
+    public SymmetricSparseMatrix AssembleSigmaMassMatrix(Grid<TNode> grid)
     {
-        foreach (var condition in conditions)
+        var globalMatrix = _matrixPortraitBuilder.Build(grid);
+
+        foreach (var element in grid)
         {
-            _inserter.InsertVector(_equation.RightSide, condition.Vector);
+            var localMatrix = _localAssembler.AssembleSigmaMassMatrix(element);
+
+            _inserter.InsertMatrix(_equation.Matrix, localMatrix);
         }
 
-        return this;
+        return globalMatrix;
     }
 
-    public GlobalAssembler<TNode, TMatrix> ApplyThirdConditions(ThirdCondition[] conditions)
+    public SymmetricSparseMatrix AssembleChiMassMatrix(Grid<TNode> grid)
     {
-        foreach (var condition in conditions)
+        var globalMatrix = _matrixPortraitBuilder.Build(grid);
+
+        foreach (var element in grid)
         {
-            _inserter.InsertMatrix(_equation.Matrix, condition.Matrix);
-            _inserter.InsertVector(_equation.RightSide, condition.Vector);
+            var localMatrix = _localAssembler.AssembleChiMassMatrix(element);
+
+            _inserter.InsertMatrix(_equation.Matrix, localMatrix);
         }
 
-        return this;
+        return globalMatrix;
     }
 
-    public GlobalAssembler<TNode, TMatrix> ApplyFirstConditions(FirstCondition[] conditions)
+    public GlobalVector AssembleRightPart(Grid<TNode> grid, double timeLayer)
     {
-        foreach (var condition in conditions)
+        var rightPart = new GlobalVector(grid.Nodes.Length);
+
+        foreach (var element in grid)
         {
-            _gaussExcluder.Exclude(_equation, condition);
+            var localRightPart = _localAssembler.AssembleRightSide(element, timeLayer);
+
+            _inserter.InsertVector(rightPart, localRightPart);
         }
 
-        return this;
+        return rightPart;
     }
 }

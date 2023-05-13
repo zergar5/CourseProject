@@ -1,6 +1,8 @@
 ﻿using CourseProject.Calculus;
+using CourseProject.FEM;
 using CourseProject.Models.LocalParts;
 using CourseProject.Tools.Providers;
+using CourseProject.TwoDimensional.Assembling.Local;
 
 namespace CourseProjectTests.Calculators;
 
@@ -22,7 +24,7 @@ public class DerivativeCalculatorTests
     {
         var localBasisFunction = new LocalBasisFunction(_linearFunctionsProvider.CreateFirstFunction(3.0, 3.0),
             _linearFunctionsProvider.CreateFirstFunction(2.0, 2.0));
-        var expected = DerivativeCalculator.CalcDerivative(localBasisFunction, r, z, 'r');
+        var expected = DerivativeCalculator.Calculate(localBasisFunction, r, z, 'r');
         Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
 
@@ -33,7 +35,7 @@ public class DerivativeCalculatorTests
     {
         var localBasisFunction = new LocalBasisFunction(_linearFunctionsProvider.CreateFirstFunction(3.0, 3.0),
             _linearFunctionsProvider.CreateFirstFunction(2.0, 2.0));
-        var expected = DerivativeCalculator.CalcDerivative(localBasisFunction, r, z, 'z');
+        var expected = DerivativeCalculator.Calculate(localBasisFunction, r, z, 'z');
         Assert.That(Math.Abs(actual - expected), Is.LessThanOrEqualTo(_eps));
     }
 }
