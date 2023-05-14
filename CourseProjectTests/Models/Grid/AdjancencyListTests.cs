@@ -1,8 +1,4 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-using CourseProject.Tools.Providers;
-
-namespace CourseProjectTests.Models.Grid;
+﻿namespace CourseProjectTests.Models.Grid;
 
 public class AdjacencyListTest
 {

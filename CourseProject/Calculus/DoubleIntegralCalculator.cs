@@ -1,5 +1,4 @@
 ﻿using CourseProject.GridGenerator.Area.Core;
-using CourseProject.TwoDimensional.Assembling.Local;
 
 namespace CourseProject.Calculus;
 

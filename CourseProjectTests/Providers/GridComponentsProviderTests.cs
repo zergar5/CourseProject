@@ -1,9 +1,4 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
-using CourseProject.Tools.Providers;
-
-namespace CourseProjectTests.Providers;
+﻿namespace CourseProjectTests.Providers;
 
 public class GridComponentsProviderTests
 {

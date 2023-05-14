@@ -28,13 +28,13 @@ public class GlobalVector
     public int Count => Vector.Length;
     public double Norm => Math.Sqrt(ScalarProduct(this, this));
 
-    public static GlobalVector operator *(double coefficient, GlobalVector localVector)
+    public static GlobalVector operator *(double coefficient, GlobalVector globalVector)
     {
-        var vector = new GlobalVector(localVector.Count);
+        var vector = new GlobalVector(globalVector.Count);
 
         for (var i = 0; i < vector.Count; i++)
         {
-            vector[i] = coefficient * localVector[i];
+            vector[i] = coefficient * globalVector[i];
         }
 
         return vector;

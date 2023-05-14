@@ -1,10 +1,4 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.GlobalParts;
-using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
-using CourseProject.Tools.Providers;
-
-namespace CourseProjectTests.Models.GlobalParts;
+﻿namespace CourseProjectTests.Models.GlobalParts;
 
 public class GlobalMatrixTests
 {

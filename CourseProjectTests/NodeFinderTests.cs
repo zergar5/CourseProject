@@ -1,9 +1,4 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-using CourseProject.Tools;
-using CourseProject.Tools.Providers;
-
-namespace CourseProjectTests;
+﻿namespace CourseProjectTests;
 
 public class NodeFinderTests
 {

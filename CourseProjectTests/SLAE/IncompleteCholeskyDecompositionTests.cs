@@ -1,6 +1,4 @@
-﻿using CourseProject.Models.GlobalParts;
-
-namespace CourseProjectTests.SLAE;
+﻿namespace CourseProjectTests.SLAE;
 
 public class IncompleteCholeskyDecompositionTests
 {

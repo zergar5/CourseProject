@@ -4,22 +4,22 @@ namespace CourseProject.TwoDimensional.Assembling.Local;
 
 public class LocalBasisFunction
 {
-    private readonly Func<double, double> _xFunction;
-    private readonly Func<double, double> _yFunction;
+    private readonly Func<double, double> _rFunction;
+    private readonly Func<double, double> _zFunction;
 
-    public LocalBasisFunction(Func<double, double> xFunction, Func<double, double> yFunction)
+    public LocalBasisFunction(Func<double, double> rFunction, Func<double, double> zFunction)
     {
-        _xFunction = xFunction;
-        _yFunction = yFunction;
+        _rFunction = rFunction;
+        _zFunction = zFunction;
     }
 
     public double Calculate(Node2D node)
     {
-        return _xFunction(node.X) * _yFunction(node.Y);
+        return _rFunction(node.R) * _zFunction(node.Z);
     }
 
     public double Calculate(double r, double z)
     {
-        return _xFunction(r) * _yFunction(z);
+        return _rFunction(r) * _zFunction(z);
     }
 }

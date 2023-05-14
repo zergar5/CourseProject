@@ -1,8 +1,6 @@
 ﻿using CourseProject.Core;
-using CourseProject.Core.Boundary;
 using CourseProject.Core.Global;
 using CourseProject.FEM.Assembling;
-using CourseProject.FEM.Assembling.Global;
 using CourseProject.FEM.Assembling.Local;
 
 namespace CourseProject.TwoDimensional.Assembling.Global;
@@ -34,7 +32,7 @@ public class GlobalAssembler<TNode>
         {
             var localMatrix = _localAssembler.AssembleStiffnessMatrix(element);
 
-            _inserter.InsertMatrix(_equation.Matrix, localMatrix);
+            _inserter.InsertMatrix(globalMatrix, localMatrix);
         }
 
         return globalMatrix;
@@ -48,7 +46,7 @@ public class GlobalAssembler<TNode>
         {
             var localMatrix = _localAssembler.AssembleSigmaMassMatrix(element);
 
-            _inserter.InsertMatrix(_equation.Matrix, localMatrix);
+            _inserter.InsertMatrix(globalMatrix, localMatrix);
         }
 
         return globalMatrix;
@@ -62,7 +60,7 @@ public class GlobalAssembler<TNode>
         {
             var localMatrix = _localAssembler.AssembleChiMassMatrix(element);
 
-            _inserter.InsertMatrix(_equation.Matrix, localMatrix);
+            _inserter.InsertMatrix(globalMatrix, localMatrix);
         }
 
         return globalMatrix;

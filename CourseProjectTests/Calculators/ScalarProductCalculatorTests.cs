@@ -1,6 +1,4 @@
-﻿using CourseProject.Models.GlobalParts;
-
-namespace CourseProjectTests.Calculators;
+﻿namespace CourseProjectTests.Calculators;
 
 public class ScalarProductCalculatorTests
 {

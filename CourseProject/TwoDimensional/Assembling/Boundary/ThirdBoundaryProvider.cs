@@ -1,7 +1,6 @@
 ﻿using CourseProject.Core.Base;
 using CourseProject.Core.Boundary;
 using CourseProject.Core.GridComponents;
-using CourseProject.Core.Local;
 
 namespace CourseProject.TwoDimensional.Assembling.Boundary;
 

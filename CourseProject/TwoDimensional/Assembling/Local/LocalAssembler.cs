@@ -3,7 +3,6 @@ using CourseProject.Core;
 using CourseProject.Core.Base;
 using CourseProject.Core.GridComponents;
 using CourseProject.Core.Local;
-using CourseProject.FEM;
 using CourseProject.FEM.Assembling.Local;
 using CourseProject.FEM.Parameters;
 using CourseProject.GridGenerator.Area.Core;
@@ -27,8 +26,8 @@ public class LocalAssembler : ILocalAssembler
         LocalBasisFunctionsProvider localBasisFunctionsProvider,
         MaterialFactory materialFactory,
         LambdaInterpolateProvider lambdaInterpolateProvider,
-        IFunctionalParameter functionalParameter, 
-        DoubleIntegralCalculator doubleIntegralCalculator, 
+        IFunctionalParameter functionalParameter,
+        DoubleIntegralCalculator doubleIntegralCalculator,
         DerivativeCalculator derivativeCalculator
     )
     {
@@ -39,7 +38,7 @@ public class LocalAssembler : ILocalAssembler
         _functionalParameter = functionalParameter;
         _doubleIntegralCalculator = doubleIntegralCalculator;
         _derivativeCalculator = derivativeCalculator;
-        
+
     }
 
     public LocalMatrix AssembleStiffnessMatrix(Element element)
@@ -65,9 +64,9 @@ public class LocalAssembler : ILocalAssembler
         return new LocalMatrix(element.NodesIndexes, material.Chi * matrix);
     }
 
-    public LocalVector AssembleRightSide(Element element)
+    public LocalVector AssembleRightSide(Element element, double time)
     {
-        var vector = GetRightPart(element);
+        var vector = GetRightPart(element, time);
 
         return new LocalVector(element.NodesIndexes, vector);
     }
@@ -76,8 +75,8 @@ public class LocalAssembler : ILocalAssembler
     {
         var stiffness = new BaseMatrix(element.NodesIndexes.Length);
 
-        var rInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].X, _grid.Nodes[element.NodesIndexes[1]].X);
-        var zInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].Y, _grid.Nodes[element.NodesIndexes[2]].Y);
+        var rInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].R, _grid.Nodes[element.NodesIndexes[1]].R);
+        var zInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].Z, _grid.Nodes[element.NodesIndexes[2]].Z);
 
         var localBasisFunctions = _localBasisFunctionsProvider.GetBilinearFunctions(element);
         var lambdaInterpolate = _lambdaInterpolateProvider.GetLambdaInterpolate(element);
@@ -88,12 +87,12 @@ public class LocalAssembler : ILocalAssembler
             {
                 stiffness[i, j] = _doubleIntegralCalculator.Calculate
                 (
-                    rInterval, 
+                    rInterval,
                     zInterval,
                     (r, z) =>
                     {
                         var node = new Node2D(r, z);
-                        return 
+                        return
                             lambdaInterpolate(node) *
                             (_derivativeCalculator.Calculate(localBasisFunctions[i], node, 'r') *
                             _derivativeCalculator.Calculate(localBasisFunctions[j], node, 'r') +
@@ -114,8 +113,8 @@ public class LocalAssembler : ILocalAssembler
     {
         var mass = new BaseMatrix(element.NodesIndexes.Length);
 
-        var rInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].X, _grid.Nodes[element.NodesIndexes[1]].X);
-        var zInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].Y, _grid.Nodes[element.NodesIndexes[2]].Y);
+        var rInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].R, _grid.Nodes[element.NodesIndexes[1]].R);
+        var zInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].Z, _grid.Nodes[element.NodesIndexes[2]].Z);
 
         var localBasisFunctions = _localBasisFunctionsProvider.GetBilinearFunctions(element);
 
@@ -142,12 +141,12 @@ public class LocalAssembler : ILocalAssembler
         return mass;
     }
 
-    private BaseVector GetRightPart(Element element, double timeLayer)
+    private BaseVector GetRightPart(Element element, double time)
     {
         var rightPart = new BaseVector(element.NodesIndexes.Length);
 
-        var rInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].X, _grid.Nodes[element.NodesIndexes[1]].X);
-        var zInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].Y, _grid.Nodes[element.NodesIndexes[2]].Y);
+        var rInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].R, _grid.Nodes[element.NodesIndexes[1]].R);
+        var zInterval = new Interval(_grid.Nodes[element.NodesIndexes[0]].Z, _grid.Nodes[element.NodesIndexes[2]].Z);
 
         var localBasisFunctions = _localBasisFunctionsProvider.GetBilinearFunctions(element);
 
@@ -161,7 +160,7 @@ public class LocalAssembler : ILocalAssembler
                 {
                     var node = new Node2D(r, z);
                     return
-                        _functionalParameter.Calculate(i, timeLayer) * localBasisFunctions[i].Calculate(node) * r;
+                        _functionalParameter.Calculate(node, time) * localBasisFunctions[i].Calculate(node) * r;
                 }
             );
         }

@@ -1,10 +1,4 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-using CourseProject.Models.LocalParts;
-using CourseProject.Tools;
-using CourseProject.Tools.Providers;
-
-namespace CourseProjectTests.Models.Grid;
+﻿namespace CourseProjectTests.Models.Grid;
 
 public class ElementTests
 {

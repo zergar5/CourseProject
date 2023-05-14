@@ -58,6 +58,38 @@ public class SymmetricSparseMatrix
         return result;
     }
 
+    public static SymmetricSparseMatrix operator *(double number, SymmetricSparseMatrix matrix)
+    {
+        var result = matrix.Clone();
+
+        for (var i = 0; i < matrix.CountRows; i++)
+        {
+            result.Diagonal[i] *= number;
+
+            for (var j = matrix.RowsIndexes[i]; j < matrix.RowsIndexes[i + 1]; j++)
+            {
+                result.Values[j] *= number;
+            }
+        }
+
+        return result;
+    }
+
+    public static SymmetricSparseMatrix Sum(SymmetricSparseMatrix matrix1, SymmetricSparseMatrix matrix2)
+    {
+        for (var i = 0; i < matrix1.CountRows; i++)
+        {
+            matrix1.Diagonal[i] += matrix2.Diagonal[i];
+
+            for (var j = matrix1.RowsIndexes[i]; j < matrix1.RowsIndexes[i + 1]; j++)
+            {
+                matrix1.Values[j] += matrix2.Values[j];
+            }
+        }
+
+        return matrix1;
+    }
+
     public SymmetricSparseMatrix Clone()
     {
         var rowIndexes = new int[RowsIndexes.Length];

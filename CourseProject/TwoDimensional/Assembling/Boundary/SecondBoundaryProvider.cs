@@ -1,7 +1,6 @@
 ﻿using CourseProject.Core;
 using CourseProject.Core.Base;
 using CourseProject.Core.Boundary;
-using CourseProject.Core.Global;
 using CourseProject.Core.GridComponents;
 using CourseProject.Core.Local;
 using CourseProject.TwoDimensional.Parameters;
@@ -49,7 +48,7 @@ public class SecondBoundaryProvider
 
             var material = MaterialFactory.GetById(Grid.Elements[elementsIndexes[i]].MaterialId);
 
-            BaseVector.Multiply(material.Lambdas, vector);
+            //BaseVector.Multiply(material.Lambdas, vector);
 
             conditions.Add(new SecondCondition(new LocalVector(indexes, vector)));
         }
@@ -67,7 +66,7 @@ public class SecondBoundaryProvider
             [1] = uDerivative(Grid.Nodes[indexes[0]]) + 2d * uDerivative(Grid.Nodes[indexes[1]])
         };
 
-        BaseVector.Multiply(h * Grid.Nodes[indexes[0]].X / 6.0, vector);
+        BaseVector.Multiply(h * Grid.Nodes[indexes[0]].R / 6.0, vector);
 
         return vector;
     }

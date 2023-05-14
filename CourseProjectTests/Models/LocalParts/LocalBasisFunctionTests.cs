@@ -1,7 +1,4 @@
-﻿using CourseProject.Models.LocalParts;
-using CourseProject.Tools.Providers;
-
-namespace CourseProjectTests.Models.LocalParts;
+﻿namespace CourseProjectTests.Models.LocalParts;
 
 public class LocalBasisFunctionTests
 {

@@ -18,14 +18,14 @@ public class RightPartParameter : IFunctionalParameter
         _grid = grid;
     }
 
-    public double Calculate(int nodeNumber, double timeLayer)
+    public double Calculate(int nodeNumber, double time)
     {
         var node = _grid.Nodes[nodeNumber];
-        return _function(node, timeLayer);
+        return _function(node, time);
     }
 
-    public double Calculate(Node2D node, double timeLayer)
+    public double Calculate(Node2D node, double time)
     {
-        return _function(node, timeLayer);
+        return _function(node, time);
     }
 }

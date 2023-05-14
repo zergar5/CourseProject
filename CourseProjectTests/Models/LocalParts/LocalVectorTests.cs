@@ -1,6 +1,4 @@
-﻿using CourseProject.Models.LocalParts;
-
-namespace CourseProjectTests.Models.LocalParts;
+﻿namespace CourseProjectTests.Models.LocalParts;
 
 public class LocalVectorTests
 {

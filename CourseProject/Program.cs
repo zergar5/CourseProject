@@ -1,118 +1,80 @@
-﻿using CourseProject.Factories;
-using CourseProject.IOs;
-using CourseProject.Models.BoundaryConditions;
-using CourseProject.Models.GlobalParts;
-using CourseProject.Models.Grid;
+﻿using CourseProject.Calculus;
+using CourseProject.Core.GridComponents;
+using CourseProject.FEM;
+using CourseProject.GridGenerator.Area.Splitting;
+using CourseProject.GridGenerator;
+using CourseProject.GridGenerator.Area.Core;
+using CourseProject.SLAE.Preconditions.LLT;
 using CourseProject.SLAE.Solvers;
-using CourseProject.Tools;
-using CourseProject.Tools.Providers;
+using CourseProject.Time;
+using CourseProject.Time.Schemes.Explicit;
+using CourseProject.TwoDimensional.Assembling;
+using CourseProject.TwoDimensional.Assembling.Boundary;
+using CourseProject.TwoDimensional.Assembling.Global;
+using CourseProject.TwoDimensional.Assembling.Local;
+using CourseProject.TwoDimensional.Parameters;
 
-var boundaryConditionI = new BoundaryConditionIO("../CourseProject/Input/BoundaryConditions/");
-var globalVectorI = new GlobalVectorIO("../CourseProject/Input/GlobalVectors/");
-var nodeI = new NodeIO();
-var materialI = new MaterialIO("../CourseProject/Input/Materials/");
-var gridI = new GridIO("../CourseProject/Input/Grid/");
-var parametersI = new ParametersIO("../CourseProject/Input/");
+var gridBuilder3D = new GridBuilder2D();
+var grid = gridBuilder3D
+    .SetRAxis(new AxisSplitParameter(
+            new[] { 0d, 1d },
+            new UniformSplitter(1)
+        )
+    )
+    .SetZAxis(new AxisSplitParameter(
+            new[] { 0d, 1d },
+            new UniformSplitter(1)
+        )
+    )
+    .Build();
 
-materialI.ReadMaterialsParametersFromFile("MaterialsParameters.txt", out var lambdasList, out var gammasList);
+var materialFactory = new MaterialFactory
+(
+    new List<double[]> { new [] {1d, 1d, 1d, 1d, 1d, 1d, 1d, 1d, 1d} },
+    new List<double> { 1d },
+    new List<double> { 1d }
+);
 
-var materialFactory = new MaterialFactory(lambdasList, gammasList);
 var linearFunctionsProvider = new LinearFunctionsProvider();
-var gridComponentsProvider = new GridComponentsProvider(materialFactory, linearFunctionsProvider);
-var gridFactory = new GridFactory(gridComponentsProvider);
+var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, linearFunctionsProvider, materialFactory);
 
-gridI.ReadParametersFromFile("GridParameters.txt", out var cornerNodes, out var numberByWidth, out var numberByHeight);
-var grid = gridFactory.CreateGrid(cornerNodes, numberByWidth, numberByHeight);
+var lambdaInterpolateProvider = new LambdaInterpolateProvider(localBasisFunctionsProvider, materialFactory);
 
-var adjacencyList = new AdjacencyList(grid);
-adjacencyList.CreateAdjacencyList();
+var f = new RightPartParameter((p, t) => p.R, grid);
 
-var globalMatrix = new GlobalMatrix(adjacencyList);
-var globalVector = new GlobalVector(globalMatrix.N);
+var doubleIntegralCalculator = new DoubleIntegralCalculator();
+var derivativeCalculator = new DerivativeCalculator();
 
-var nodeFinder = new NodeFinder(grid);
-var pComponentsProvider =
-    new PComponentsProvider((r, z) => -Math.Exp(r * z) * ((Math.Pow(r, 3) + r * z * z + z - r) / r), nodeFinder);
+var localAssembler = new LocalAssembler(grid, localBasisFunctionsProvider, materialFactory, lambdaInterpolateProvider, f,
+    doubleIntegralCalculator, derivativeCalculator);
 
-foreach (var element in grid)
-{
-    element.CalcStiffnessMatrix(nodeFinder);
-    element.CalcMassMatrix(nodeFinder);
-    element.CalcRightPart(pComponentsProvider);
-    element.CalcAMatrix();
-    globalMatrix.PlaceLocalMatrix(element.LocalMatrixA, element.GlobalNodesNumbers);
-    globalVector.PlaceLocalVector(element.RightPart, element.GlobalNodesNumbers);
-}
+var matrixPortraitBuilder = new MatrixPortraitBuilder();
+var inserter = new Inserter();
+var timeDeltasCalculator = new TimeDeltasCalculator();
 
-boundaryConditionI.ReadFirstCondition("FirstBoundaryCondition.txt", out var globalNodesNumbersList1, out var usList1);
-boundaryConditionI.ReadSecondCondition("SecondBoundaryCondition.txt", out var globalNodesNumbersList2, out var thetasList);
-boundaryConditionI.ReadThirdCondition("ThirdBoundaryCondition.txt", out var globalNodesNumbersList3, out var betasList, out var usList2);
+var globalAssembler = new GlobalAssembler<Node2D>(matrixPortraitBuilder, localAssembler, inserter);
+var timeLayers = new UniformSplitter(2)
+    .EnumerateValues(new Interval(0, 2))
+    .ToArray();
+var threeLayer = new ThreeLayer(globalAssembler, grid, timeDeltasCalculator);
+var fourLayer = new FourLayer(globalAssembler, grid, timeDeltasCalculator);
+var firstBoundaryProvider = new FirstBoundaryProvider(grid, (p, t) => p.R * t);
+var gaussExcluder = new GaussExcluder();
+var secondBoundaryProvider = new SecondBoundaryProvider(grid, materialFactory);
+var thirdBoundaryProvider = new ThirdBoundaryProvider(firstBoundaryProvider, secondBoundaryProvider);
+var lltPreconditioner = new LLTPreconditioner();
+var lltSparse = new LLTSparse(lltPreconditioner);
+var solver = new MCG(lltPreconditioner, lltSparse);
 
-var boundaryConditionsFactory = new BoundaryConditionFactory();
+var timeDisreditor = new TimeDisreditor(globalAssembler, timeLayers, grid, threeLayer, fourLayer, firstBoundaryProvider,
+    gaussExcluder, secondBoundaryProvider, thirdBoundaryProvider, inserter);
 
-var firstBoundaryConditionArray = new FirstBoundaryCondition[globalNodesNumbersList1.Count];
-var secondBoundaryConditionArray = new SecondBoundaryCondition[globalNodesNumbersList2.Count];
-var thirdBoundaryConditionArray = new ThirdBoundaryCondition[globalNodesNumbersList3.Count];
+var solutions = 
+    timeDisreditor
+    .SetFirstInitialSolution((p, t) => p.R * t)
+    .SetSecondInitialSolution((p, t) => p.R)
+    .SetFirstConditions(new[] { 0, 0 }, new[] { Bound.Lower, Bound.Left })
+    .SetSolver(solver)
+    .GetSolutions();
 
-for (var i = 0; i < firstBoundaryConditionArray.Length; i++)
-{
-    firstBoundaryConditionArray[i] =
-        boundaryConditionsFactory.CreateFirstBoundaryCondition(globalNodesNumbersList1[i], usList1[i]);
-}
-
-for (var i = 0; i < secondBoundaryConditionArray.Length; i++)
-{
-    secondBoundaryConditionArray[i] =
-        boundaryConditionsFactory.CreateSecondBoundaryCondition(globalNodesNumbersList2[i], thetasList[i]);
-}
-
-for (var i = 0; i < thirdBoundaryConditionArray.Length; i++)
-{
-    thirdBoundaryConditionArray[i] =
-        boundaryConditionsFactory.CreateThirdBoundaryCondition(globalNodesNumbersList3[i], betasList[i], usList2[i]);
-}
-
-var boundaryConditionsApplicator = new BoundaryConditionsApplicator(nodeFinder);
-
-foreach (var secondBoundaryCondition in secondBoundaryConditionArray)
-{
-    boundaryConditionsApplicator.ApplySecondCondition(globalVector, secondBoundaryCondition);
-}
-
-foreach (var thirdBoundaryCondition in thirdBoundaryConditionArray)
-{
-    boundaryConditionsApplicator.ApplyThirdCondition(globalMatrix, globalVector, thirdBoundaryCondition);
-}
-
-foreach (var firstBoundaryCondition in firstBoundaryConditionArray)
-{
-    boundaryConditionsApplicator.ApplyFirstCondition(globalMatrix, globalVector, firstBoundaryCondition);
-}
-
-var startVector = globalVectorI.Read("StartVector.txt");
-var (eps, maxIter) = parametersI.ReadMethodParameters("MCGParameters.txt");
-
-var choleskyMCG = new MCG();
-
-var qVector = choleskyMCG.Solve(globalMatrix, startVector, globalVector, eps, maxIter);
-
-var globalVectorO = new GlobalVectorIO("../CourseProject/Output/GlobalVectors/");
-globalVectorO.Write("QVector.txt", qVector);
-
-var solutionFinder = new SolutionFinder(grid, qVector, nodeFinder);
-
-while (true)
-{
-    var node = nodeI.ReadNodeFromConsole();
-
-    if (solutionFinder.CheckArea(node))
-    {
-        var result = solutionFinder.FindSolution(node);
-
-        CourseHolder.WriteSolution(node, result);
-    }
-    else
-    {
-        CourseHolder.WriteAreaInfo();
-    }
-}
+Console.WriteLine();

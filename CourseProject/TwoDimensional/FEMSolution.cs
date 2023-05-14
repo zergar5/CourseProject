@@ -59,15 +59,15 @@ public class FEMSolution
     {
         var leftCornerNode = _grid.Nodes[element.NodesIndexes[0]];
         var rightCornerNode = _grid.Nodes[element.NodesIndexes[^1]];
-        return node.X >= leftCornerNode.X && node.Y >= leftCornerNode.Y &&
-               node.X <= rightCornerNode.X && node.Y <= rightCornerNode.Y;
+        return node.R >= leftCornerNode.R && node.Z >= leftCornerNode.Z &&
+               node.R <= rightCornerNode.R && node.Z <= rightCornerNode.Z;
     }
 
     private bool AreaHas(Node2D node)
     {
         var leftCornerNode = _grid.Nodes[0];
         var rightCornerNode = _grid.Nodes[^1];
-        return node.X >= leftCornerNode.X && node.Y >= leftCornerNode.Y && 
-               node.X <= rightCornerNode.X && node.Y <= rightCornerNode.Y;
+        return node.R >= leftCornerNode.R && node.Z >= leftCornerNode.Z &&
+               node.R <= rightCornerNode.R && node.Z <= rightCornerNode.Z;
     }
 }

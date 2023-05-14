@@ -1,7 +1,4 @@
-﻿using CourseProject.Factories;
-using CourseProject.Models.Grid;
-
-namespace CourseProjectTests.Factories;
+﻿namespace CourseProjectTests.Factories;
 
 public class MaterialFactoryTests
 {

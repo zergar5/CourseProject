@@ -6,22 +6,22 @@ namespace CourseProject.GridGenerator;
 
 public class GridBuilder2D : IGridBuilder<Node2D>
 {
-    private AxisSplitParameter? _xAxisSplitParameter;
-    private AxisSplitParameter? _yAxisSplitParameter;
+    private AxisSplitParameter? _rAxisSplitParameter;
+    private AxisSplitParameter? _zAxisSplitParameter;
     private int[]? _materialsId;
 
-    private int GetTotalXElements => _xAxisSplitParameter.Splitters.Sum(x => x.Steps);
-    private int GetTotalYElements => _yAxisSplitParameter.Splitters.Sum(y => y.Steps);
+    private int GetTotalRElements => _rAxisSplitParameter.Splitters.Sum(r => r.Steps);
+    private int GetTotalZElements => _zAxisSplitParameter.Splitters.Sum(z => z.Steps);
 
-    public GridBuilder2D SetXAxis(AxisSplitParameter splitParameter)
+    public GridBuilder2D SetRAxis(AxisSplitParameter splitParameter)
     {
-        _xAxisSplitParameter = splitParameter;
+        _rAxisSplitParameter = splitParameter;
         return this;
     }
 
-    public GridBuilder2D SetYAxis(AxisSplitParameter splitParameter)
+    public GridBuilder2D SetZAxis(AxisSplitParameter splitParameter)
     {
-        _yAxisSplitParameter = splitParameter;
+        _zAxisSplitParameter = splitParameter;
         return this;
     }
 
@@ -33,10 +33,10 @@ public class GridBuilder2D : IGridBuilder<Node2D>
 
     public Grid<Node2D> Build()
     {
-        if (_xAxisSplitParameter == null || _yAxisSplitParameter == null)
+        if (_rAxisSplitParameter == null || _zAxisSplitParameter == null)
             throw new ArgumentNullException();
 
-        var totalXElements = GetTotalXElements;
+        var totalRElements = GetTotalRElements;
 
         var totalNodes = GetTotalNodes();
         var totalElements = GetTotalElements();
@@ -48,35 +48,35 @@ public class GridBuilder2D : IGridBuilder<Node2D>
 
         var i = 0;
 
-        foreach (var (ySection, ySplitter) in _yAxisSplitParameter.SectionWithParameter)
+        foreach (var (zSection, zSplitter) in _zAxisSplitParameter.SectionWithParameter)
         {
-            var yValues = ySplitter.EnumerateValues(ySection);
-            if (i > 0) yValues = yValues.Skip(1);
+            var zValues = zSplitter.EnumerateValues(zSection);
+            if (i > 0) zValues = zValues.Skip(1);
 
-            foreach (var y in yValues)
+            foreach (var z in zValues)
             {
                 var j = 0;
 
-                foreach (var (xSection, xSplitter) in _xAxisSplitParameter.SectionWithParameter)
+                foreach (var (rSection, rSplitter) in _rAxisSplitParameter.SectionWithParameter)
                 {
-                    var xValues = xSplitter.EnumerateValues(xSection);
-                    if (j > 0) xValues = xValues.Skip(1);
+                    var rValues = rSplitter.EnumerateValues(rSection);
+                    if (j > 0) rValues = rValues.Skip(1);
 
-                    foreach (var x in xValues)
+                    foreach (var r in rValues)
                     {
-                        var nodeIndex = j + i * (totalXElements + 1);
+                        var nodeIndex = j + i * (totalRElements + 1);
 
-                        nodes[nodeIndex] = new Node2D(x, y);
+                        nodes[nodeIndex] = new Node2D(r, z);
 
                         if (i > 0 && j > 0)
                         {
-                            var elementIndex = j - 1 + (i - 1) * totalXElements;
+                            var elementIndex = j - 1 + (i - 1) * totalRElements;
                             var nodesIndexes = GetCurrentElementIndexes(i - 1, j - 1);
 
                             elements[elementIndex] = new Element(
                                 nodesIndexes,
-                                nodes[nodesIndexes[1]].X - nodes[nodesIndexes[0]].X,
-                                nodes[nodesIndexes[2]].Y - nodes[nodesIndexes[0]].Y,
+                                nodes[nodesIndexes[1]].R - nodes[nodesIndexes[0]].R,
+                                nodes[nodesIndexes[2]].Z - nodes[nodesIndexes[0]].Z,
                                 _materialsId[elementIndex]
                                 );
                         }
@@ -94,24 +94,24 @@ public class GridBuilder2D : IGridBuilder<Node2D>
 
     private int GetTotalNodes()
     {
-        return (GetTotalXElements + 1) * (GetTotalYElements + 1);
+        return (GetTotalRElements + 1) * (GetTotalZElements + 1);
     }
 
     private int GetTotalElements()
     {
-        return GetTotalXElements * GetTotalYElements;
+        return GetTotalRElements * GetTotalZElements;
     }
 
     private int[] GetCurrentElementIndexes(int j, int k)
     {
-        var totalXElements = GetTotalXElements;
+        var totalRElements = GetTotalRElements;
 
         var indexes = new[]
         {
-            k + j * (totalXElements + 1),
-            k + 1 + j * (totalXElements + 1),
-            k + (j + 1) * (totalXElements + 1),
-            k + 1 + (j + 1) * (totalXElements + 1)
+            k + j * (totalRElements + 1),
+            k + 1 + j * (totalRElements + 1),
+            k + (j + 1) * (totalRElements + 1),
+            k + 1 + (j + 1) * (totalRElements + 1)
         };
 
         return indexes;

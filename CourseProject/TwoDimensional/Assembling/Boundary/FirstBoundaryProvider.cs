@@ -7,15 +7,15 @@ namespace CourseProject.TwoDimensional.Assembling.Boundary;
 public class FirstBoundaryProvider
 {
     private readonly Grid<Node2D> _grid;
-    private readonly Func<Node2D, double> _u;
+    private readonly Func<Node2D, double, double> _u;
 
-    public FirstBoundaryProvider(Grid<Node2D> grid, Func<Node2D, double> u)
+    public FirstBoundaryProvider(Grid<Node2D> grid, Func<Node2D, double, double> u)
     {
         _grid = grid;
         _u = u;
     }
 
-    public FirstCondition[] GetConditions(int[] elementsIndexes, Bound[] bounds)
+    public FirstCondition[] GetConditions(int[] elementsIndexes, Bound[] bounds, double time)
     {
         var conditions = new List<FirstCondition>(elementsIndexes.Length);
 
@@ -27,7 +27,7 @@ public class FirstBoundaryProvider
 
             for (var j = 0; j < indexes.Length; j++)
             {
-                values[j] = Calculate(indexes[j]);
+                values[j] = Calculate(indexes[j], time);
             }
 
             conditions.Add(new FirstCondition(indexes, values));
@@ -89,11 +89,11 @@ public class FirstBoundaryProvider
         //    bounds.Add(Bound.Upper);
         //}
 
-        return GetConditions(elementsIndexes.ToArray(), bounds.ToArray());
+        return GetConditions(elementsIndexes.ToArray(), bounds.ToArray(), 0d);
     }
 
-    public double Calculate(int index)
+    public double Calculate(int index, double time)
     {
-        return _u(_grid.Nodes[index]);
+        return _u(_grid.Nodes[index], time);
     }
 }

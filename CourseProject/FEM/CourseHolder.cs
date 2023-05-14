@@ -11,7 +11,7 @@ public class CourseHolder
 
     public static void WriteSolution(Node2D point, double sValue)
     {
-        Console.WriteLine($"({point.X},{point.Y}) {sValue:E14}");
+        Console.WriteLine($"({point.R},{point.Z}) {sValue:E14}");
     }
 
     public static void WriteAreaInfo()

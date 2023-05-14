@@ -18,7 +18,7 @@ public class LambdaInterpolateProvider
     {
         var lambdas = _materialFactory.GetById(element.MaterialId).Lambdas;
 
-        return p => 
+        return p =>
                     lambdas[0] * _localBasisFunctions[0].Calculate(p) +
                     lambdas[1] * _localBasisFunctions[1].Calculate(p) +
                     lambdas[2] * _localBasisFunctions[2].Calculate(p) +

@@ -1,9 +1,3 @@
-using CourseProject.Factories;
-using CourseProject.Models.BoundaryConditions;
-using CourseProject.Models.Grid;
-using CourseProject.Tools;
-using CourseProject.Tools.Providers;
-
 namespace CourseProjectTests.Factories;
 
 public class BoundaryConditionFactoryTests

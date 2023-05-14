@@ -1,7 +1,4 @@
-﻿using CourseProject.Models.GlobalParts;
-using CourseProject.Models.LocalParts;
-
-namespace CourseProjectTests.Models.GlobalParts;
+﻿namespace CourseProjectTests.Models.GlobalParts;
 
 public class GlobalVectorTests
 {
