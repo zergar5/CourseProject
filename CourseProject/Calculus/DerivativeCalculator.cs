@@ -20,4 +20,20 @@ public class DerivativeCalculator
         }
         return result / (2.0 * Delta);
     }
+
+    public double Calculate(Func<Node2D, double, double> function, Node2D point, double time, char variableChar)
+    {
+        double result;
+        if (variableChar == 'r')
+        {
+            result = function(point with { R = point.R + Delta }, time) -
+                     function(point with { R = point.R - Delta }, time);
+        }
+        else
+        {
+            result = function(point with { Z = point.Z + Delta }, time) -
+                     function(point with { Z = point.Z - Delta }, time);
+        }
+        return result / (2.0 * Delta);
+    }
 }

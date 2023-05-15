@@ -1,79 +1,117 @@
-﻿using CourseProject.Core;
+﻿using System.Numerics;
+using CourseProject.Calculus;
+using CourseProject.Core;
 using CourseProject.Core.Base;
 using CourseProject.Core.Boundary;
 using CourseProject.Core.GridComponents;
 using CourseProject.Core.Local;
+using CourseProject.FEM.Assembling;
 using CourseProject.TwoDimensional.Parameters;
 
 namespace CourseProject.TwoDimensional.Assembling.Boundary;
 
 public class SecondBoundaryProvider
 {
-    public readonly Grid<Node2D> Grid;
-    public readonly MaterialFactory MaterialFactory;
-    private List<SecondCondition> _conditions = new();
+    private readonly Grid<Node2D> _grid;
+    private readonly MaterialFactory _materialFactory;
+    private readonly Func<Node2D, double, double> _u;
+    private readonly DerivativeCalculator _derivativeCalculator;
+    private readonly BaseMatrix _templateMatrixR;
+    private readonly BaseMatrix _templateMatrixZ;
 
-    public SecondBoundaryProvider(Grid<Node2D> grid, MaterialFactory materialFactory)
+    public SecondBoundaryProvider
+    (
+        Grid<Node2D> grid,
+        MaterialFactory materialFactory,
+        Func<Node2D, double, double> u,
+        DerivativeCalculator derivativeCalculator,
+        ITemplateMatrixProvider templateMatrixProviderR,
+        ITemplateMatrixProvider templateMatrixProviderZ
+    )
     {
-        Grid = grid;
-        MaterialFactory = materialFactory;
+        _grid = grid;
+        _materialFactory = materialFactory;
+        _u = u;
+        _derivativeCalculator = derivativeCalculator;
+        _templateMatrixR = templateMatrixProviderR.GetMatrix();
+        _templateMatrixZ = templateMatrixProviderZ.GetMatrix();
     }
 
-    public SecondCondition[] GetConditions()
-    {
-        var conditions = _conditions.ToArray();
-        _conditions.Clear();
-        return conditions;
-    }
-
-    public SecondBoundaryProvider CreateConditions(int[] elementsIndexes, Bound[] bounds,
-        Func<Node2D, double> uDerivative)
+    public SecondCondition[] GetConditions(int[] elementsIndexes, Bound[] bounds, double time)
     {
         var conditions = new List<SecondCondition>(elementsIndexes.Length);
 
         for (var i = 0; i < elementsIndexes.Length; i++)
         {
-            var (indexes, h) = Grid.Elements[elementsIndexes[i]].GetBoundNodeIndexes(bounds[i]);
+            var (indexes, h) = _grid.Elements[elementsIndexes[i]].GetBoundNodeIndexes(bounds[i]);
 
             BaseVector vector;
 
-            if (bounds[i] == Bound.Lower || bounds[i] == Bound.Upper)
+            var lambdas = _materialFactory.GetById(_grid.Elements[elementsIndexes[i]].MaterialId).Lambdas;
+
+            if (bounds[i] == Bound.Left || bounds[i] == Bound.Right)
             {
-                vector = GetRVector(indexes, h, uDerivative);
+                vector = GetRVector(indexes, bounds[i], h, lambdas, time);
             }
             else
             {
-                vector = GetZVector(indexes, h, uDerivative);
+                vector = GetZVector(indexes, bounds[i], h, lambdas, time);
             }
-
-            var material = MaterialFactory.GetById(Grid.Elements[elementsIndexes[i]].MaterialId);
-
-            //BaseVector.Multiply(material.Lambdas, vector);
 
             conditions.Add(new SecondCondition(new LocalVector(indexes, vector)));
         }
 
-        _conditions.AddRange(conditions);
-
-        return this;
+        return conditions.ToArray();
     }
 
-    private BaseVector GetRVector(int[] indexes, double h, Func<Node2D, double> uDerivative)
+    private BaseVector GetRVector(int[] indexes, Bound bound, double h, double[] lambdas, double time)
     {
         var vector = new BaseVector(indexes.Length)
         {
-            [0] = 2d * uDerivative(Grid.Nodes[indexes[0]]) + uDerivative(Grid.Nodes[indexes[1]]),
-            [1] = uDerivative(Grid.Nodes[indexes[0]]) + 2d * uDerivative(Grid.Nodes[indexes[1]])
+            [0] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[0]], time, 'r'),
+            [1] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[1]], time, 'r')
         };
 
-        BaseVector.Multiply(h * Grid.Nodes[indexes[0]].R / 6.0, vector);
+        if(bound == Bound.Left)
+        {
+            vector[0] *= -lambdas[0];
+            vector[1] *= -lambdas[6];
+        }
+        else
+        {
+            vector[0] *= lambdas[2];
+            vector[1] *= lambdas[8];
+        }
+
+        vector = BaseVector.Multiply(h * _grid.Nodes[indexes[0]].R / 6d, _templateMatrixR * vector);
 
         return vector;
     }
 
-    private BaseVector GetZVector(int[] indexes, double h, Func<Node2D, double> uDerivative)
+    private BaseVector GetZVector(int[] indexes, Bound bound, double h, double[] lambdas, double time)
     {
-        var vector = new BaseVector(indexes.Length);
+        var vector = new BaseVector(indexes.Length)
+        {
+            [0] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[0]], time, 'z'),
+            [1] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[1]], time, 'z')
+        };
+
+        if (bound == Bound.Lower)
+        {
+            vector[0] *= -lambdas[0];
+            vector[1] *= -lambdas[2];
+        }
+        else
+        {
+            vector[0] *= lambdas[6];
+            vector[1] *= lambdas[8];
+        }
+
+        vector = BaseVector.Sum
+        (
+            BaseVector.Multiply(h * _grid.Nodes[indexes[0]].R / 6d, _templateMatrixR * vector),
+            BaseVector.Multiply(Math.Pow(h, 2) / 12d, _templateMatrixZ * vector)
+        );
 
         return vector;
     }

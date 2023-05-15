@@ -10,7 +10,7 @@ using CourseProject.TwoDimensional.Assembling.Global;
 
 namespace CourseProject.Time;
 
-public class TimeDisreditor
+public class TimeDisсreditor
 {
     public GlobalVector PreviousSolution => TimeSolutions[_currentTimeLayer - 1];
     public GlobalVector TwoLayersBackSolution => TimeSolutions[_currentTimeLayer - 2];
@@ -34,19 +34,16 @@ public class TimeDisreditor
     private readonly SecondBoundaryProvider _secondBoundaryProvider;
     private readonly ThirdBoundaryProvider _thirdBoundaryProvider;
     private readonly Inserter _inserter;
-    private int[] _firstConditionIndexes;
-    private Bound[] _firstConditionBounds;
-    private int[] _secondConditionIndexes;
-    private Bound[] _secondConditionBounds;
-    private Func<Node2D, double, double> _secondF;
-    private int[] _thirdConditionIndexes;
-    private Bound[] _thirdConditionBounds;
-    private Func<Node2D, double, double> _thirdF;
-    private double[] _betas;
+    private int[]? _firstConditionIndexes;
+    private Bound[]? _firstConditionBounds;
+    private int[]? _secondConditionIndexes;
+    private Bound[]? _secondConditionBounds;
+    private int[]? _thirdConditionIndexes;
+    private Bound[]? _thirdConditionBounds;
+    private double[]? _betas;
     private ISolver<SymmetricSparseMatrix> _solver;
 
-
-    public TimeDisreditor
+    public TimeDisсreditor
     (
         GlobalAssembler<Node2D> globalAssembler,
         double[] timeLayers,
@@ -74,7 +71,7 @@ public class TimeDisreditor
         
     }
 
-    public TimeDisreditor SetFirstInitialSolution(Func<Node2D, double, double> u)
+    public TimeDisсreditor SetFirstInitialSolution(Func<Node2D, double, double> u)
     {
         var initialSolution = new GlobalVector(_grid.Nodes.Length);
         var currentTime = CurrentTime;
@@ -90,7 +87,7 @@ public class TimeDisreditor
         return this;
     }
 
-    public TimeDisreditor SetSecondInitialSolution(Func<Node2D, double, double> u)
+    public TimeDisсreditor SetSecondInitialSolution(Func<Node2D, double, double> u)
     {
         var initialSolution = new GlobalVector(_grid.Nodes.Length);
         var prevTime = PreviousTime;
@@ -107,7 +104,7 @@ public class TimeDisreditor
         return this;
     }
 
-    public TimeDisreditor SetFirstConditions(int[] elementsIndexes, Bound[] bounds)
+    public TimeDisсreditor SetFirstConditions(int[] elementsIndexes, Bound[] bounds)
     {
         _firstConditionIndexes = elementsIndexes;
         _firstConditionBounds = bounds;
@@ -115,18 +112,24 @@ public class TimeDisreditor
         return this;
     }
 
-    public TimeDisreditor SetSecondConditions(int[] elementsIndexes, Bound[] bounds, Func<Node2D, double, double> f)
+    public TimeDisсreditor SetSecondConditions(int[] elementsIndexes, Bound[] bounds)
     {
+        _secondConditionIndexes = elementsIndexes;
+        _secondConditionBounds = bounds;
+
         return this;
     }
 
-    public TimeDisreditor SetThirdConditions(int[] elementsIndexes, Bound[] bounds, Func<Node2D, double, double> f,
-        double[] betas)
+    public TimeDisсreditor SetThirdConditions(int[] elementsIndexes, Bound[] bounds, double[] betas)
     {
+        _thirdConditionIndexes = elementsIndexes;
+        _thirdConditionBounds = bounds;
+        _betas = betas;
+
         return this;
     }
 
-    public TimeDisreditor SetSolver(ISolver<SymmetricSparseMatrix> solver)
+    public TimeDisсreditor SetSolver(ISolver<SymmetricSparseMatrix> solver)
     {
         _solver = solver;
 
@@ -137,24 +140,24 @@ public class TimeDisreditor
     {
         var equation = UseThreeLayerScheme();
 
-        if (_firstConditionIndexes.Length > 0 && _firstConditionBounds.Length > 0)
+        if (_secondConditionIndexes != null && _secondConditionBounds != null)
+        {
+            var secondConditions = _secondBoundaryProvider.GetConditions(_secondConditionIndexes,
+                _secondConditionBounds, CurrentTime);
+            ApplySecondConditions(equation, secondConditions);
+        }
+        if (_thirdConditionIndexes != null && _thirdConditionBounds != null && _betas != null)
+        {
+            var thirdConditions = _thirdBoundaryProvider.GetConditions(_thirdConditionIndexes,
+                _thirdConditionBounds, _betas, CurrentTime);
+            ApplyThirdConditions(equation, thirdConditions);
+        }
+        if (_firstConditionIndexes != null && _firstConditionBounds != null)
         {
             var firstConditions = _firstBoundaryProvider.GetConditions(_firstConditionIndexes,
                 _firstConditionBounds, CurrentTime);
             ApplyFirstConditions(equation, firstConditions);
         }
-        //if (_secondConditionIndexes.Length > 0 && _secondConditionBounds.Length > 0 && _secondF != null)
-        //{
-        //    var secondConditions = _secondBoundaryProvider.GetConditions(_firstConditionIndexes,
-        //        _firstConditionBounds, CurrentTime);
-        //    ApplyFirstConditions(equation, firstConditions);
-        //}
-        //if (_thirdConditionIndexes.Length > 0 && _thirdConditionBounds.Length > 0 && _thirdF != null && _betas.Length > 0)
-        //{
-        //    var firstConditions = _firstBoundaryProvider.GetConditions(_firstConditionIndexes,
-        //        _firstConditionBounds, CurrentTime);
-        //    ApplyFirstConditions(equation, firstConditions);
-        //}
 
         TimeSolutions[_currentTimeLayer] = _solver.Solve(equation);
         _currentTimeLayer++;
@@ -163,27 +166,28 @@ public class TimeDisreditor
         {
             equation = UseFourLayerScheme();
 
-            if (_firstConditionIndexes.Length > 0 && _firstConditionBounds.Length > 0)
+            if (_secondConditionIndexes != null && _secondConditionBounds != null)
+            {
+                var secondConditions = _secondBoundaryProvider.GetConditions(_secondConditionIndexes,
+                    _secondConditionBounds, CurrentTime);
+                ApplySecondConditions(equation, secondConditions);
+            }
+            if (_thirdConditionIndexes != null && _thirdConditionBounds != null && _betas != null)
+            {
+                var thirdConditions = _thirdBoundaryProvider.GetConditions(_thirdConditionIndexes,
+                    _thirdConditionBounds, _betas, CurrentTime);
+                ApplyThirdConditions(equation, thirdConditions);
+            }
+            if (_firstConditionIndexes != null && _firstConditionBounds != null)
             {
                 var firstConditions = _firstBoundaryProvider.GetConditions(_firstConditionIndexes,
                     _firstConditionBounds, CurrentTime);
                 ApplyFirstConditions(equation, firstConditions);
             }
-            //if (_secondConditionIndexes.Length > 0 && _secondConditionBounds.Length > 0 && _secondF != null)
-            //{
-            //    var secondConditions = _secondBoundaryProvider.GetConditions(_firstConditionIndexes,
-            //        _firstConditionBounds, CurrentTime);
-            //    ApplyFirstConditions(equation, firstConditions);
-            //}
-            //if (_thirdConditionIndexes.Length > 0 && _thirdConditionBounds.Length > 0 && _thirdF != null && _betas.Length > 0)
-            //{
-            //    var firstConditions = _firstBoundaryProvider.GetConditions(_firstConditionIndexes,
-            //        _firstConditionBounds, CurrentTime);
-            //    ApplyFirstConditions(equation, firstConditions);
-            //}
 
             TimeSolutions[_currentTimeLayer] = _solver.Solve(equation);
             _currentTimeLayer++;
+
         } while (_currentTimeLayer < _timeLayers.Length);
 
         return TimeSolutions;

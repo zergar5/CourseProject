@@ -15,10 +15,10 @@ public class ThreeLayer
 
     public ThreeLayer(GlobalAssembler<Node2D> globalAssembler, Grid<Node2D> grid, TimeDeltasCalculator timeDeltasCalculator)
     {
-        _timeDeltasCalculator = timeDeltasCalculator;
         _stiffnessMatrix = globalAssembler.AssembleStiffnessMatrix(grid);
         _sigmaMassMatrix = globalAssembler.AssembleSigmaMassMatrix(grid);
         _chiMassMatrix = globalAssembler.AssembleChiMassMatrix(grid);
+        _timeDeltasCalculator = timeDeltasCalculator;
     }
 
     public Equation<SymmetricSparseMatrix> BuildEquation
@@ -35,8 +35,8 @@ public class ThreeLayer
         var matrixA =
             SymmetricSparseMatrix.Sum
             (
-                2d / delta1 * delta0 * _sigmaMassMatrix,
-                delta2 / delta1 * delta0 * _chiMassMatrix
+                delta2 / (delta0 * delta1) * _sigmaMassMatrix,
+                2d / (delta0 * delta1) * _chiMassMatrix
             );
         var q = new GlobalVector(matrixA.CountRows);
         var b =
@@ -47,8 +47,18 @@ public class ThreeLayer
                 (
                     GlobalVector.Sum
                     (
-                        (2 / delta1 * delta2 - delta0 / delta1 * delta2) * twoLayersBackSolution,
-                        (2 / delta2 * delta0 - (delta0 - delta2) / delta2 * delta0) * previousSolution
+                        GlobalVector.Sum
+                        (
+                            GlobalVector.Multiply(2 / (delta0 * delta2), _chiMassMatrix * previousSolution),
+                            GlobalVector.Multiply(-(delta0 - delta2) / (delta0 * delta2), _sigmaMassMatrix * previousSolution)
+                        ),
+                        GlobalVector.Sum
+                        (
+                            GlobalVector.Multiply(-2 / (delta1 * delta2), _chiMassMatrix * twoLayersBackSolution),
+                            GlobalVector.Multiply(delta0 / (delta1 * delta2), _sigmaMassMatrix * twoLayersBackSolution)
+                        )
+                        //(delta0 - 2) / (delta1 * delta2) * twoLayersBackSolution,
+                        //(2 - (delta0 - delta2)) / (delta0 * delta2) * previousSolution
                     ),
                     _stiffnessMatrix * previousSolution
                 )

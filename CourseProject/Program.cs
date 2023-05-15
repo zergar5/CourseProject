@@ -12,7 +12,11 @@ using CourseProject.TwoDimensional.Assembling;
 using CourseProject.TwoDimensional.Assembling.Boundary;
 using CourseProject.TwoDimensional.Assembling.Global;
 using CourseProject.TwoDimensional.Assembling.Local;
+using CourseProject.TwoDimensional.Assembling.MatrixTemplates;
 using CourseProject.TwoDimensional.Parameters;
+using System.Globalization;
+
+Thread.CurrentThread.CurrentCulture = CultureInfo.InvariantCulture;
 
 var gridBuilder3D = new GridBuilder2D();
 var grid = gridBuilder3D
@@ -35,46 +39,60 @@ var materialFactory = new MaterialFactory
     new List<double> { 1d }
 );
 
-var linearFunctionsProvider = new LinearFunctionsProvider();
-var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, linearFunctionsProvider, materialFactory);
-
+var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, new LinearFunctionsProvider(), materialFactory);
 var lambdaInterpolateProvider = new LambdaInterpolateProvider(localBasisFunctionsProvider, materialFactory);
 
 var f = new RightPartParameter((p, t) => p.R, grid);
 
-var doubleIntegralCalculator = new DoubleIntegralCalculator();
 var derivativeCalculator = new DerivativeCalculator();
 
 var localAssembler = new LocalAssembler(grid, localBasisFunctionsProvider, materialFactory, lambdaInterpolateProvider, f,
-    doubleIntegralCalculator, derivativeCalculator);
+    new DoubleIntegralCalculator(), derivativeCalculator);
 
-var matrixPortraitBuilder = new MatrixPortraitBuilder();
 var inserter = new Inserter();
-var timeDeltasCalculator = new TimeDeltasCalculator();
+var globalAssembler = new GlobalAssembler<Node2D>(new MatrixPortraitBuilder(), localAssembler, inserter);
 
-var globalAssembler = new GlobalAssembler<Node2D>(matrixPortraitBuilder, localAssembler, inserter);
-var timeLayers = new UniformSplitter(2)
-    .EnumerateValues(new Interval(0, 2))
+var templateRProvider = new MatrixRTemplateProvider();
+var templateZProvider = new MatrixZTemplateProvider(); 
+
+var timeLayers = new UniformSplitter(3)
+    .EnumerateValues(new Interval(0, 3))
     .ToArray();
+
+var timeDeltasCalculator = new TimeDeltasCalculator();
 var threeLayer = new ThreeLayer(globalAssembler, grid, timeDeltasCalculator);
 var fourLayer = new FourLayer(globalAssembler, grid, timeDeltasCalculator);
 var firstBoundaryProvider = new FirstBoundaryProvider(grid, (p, t) => p.R * t);
-var gaussExcluder = new GaussExcluder();
-var secondBoundaryProvider = new SecondBoundaryProvider(grid, materialFactory);
-var thirdBoundaryProvider = new ThirdBoundaryProvider(firstBoundaryProvider, secondBoundaryProvider);
+var secondBoundaryProvider = new SecondBoundaryProvider(grid, materialFactory, (p, t) => p.R * t, derivativeCalculator, templateRProvider, templateZProvider);
+var thirdBoundaryProvider = new ThirdBoundaryProvider(grid, materialFactory, (p, t) => p.R * t, derivativeCalculator, templateRProvider, templateZProvider);
+
 var lltPreconditioner = new LLTPreconditioner();
-var lltSparse = new LLTSparse(lltPreconditioner);
-var solver = new MCG(lltPreconditioner, lltSparse);
+var solver = new MCG(lltPreconditioner, new LLTSparse(lltPreconditioner));
 
-var timeDisreditor = new TimeDisreditor(globalAssembler, timeLayers, grid, threeLayer, fourLayer, firstBoundaryProvider,
-    gaussExcluder, secondBoundaryProvider, thirdBoundaryProvider, inserter);
+var timeDiscreditor = new TimeDisсreditor(globalAssembler, timeLayers, grid, threeLayer, fourLayer, firstBoundaryProvider,
+    new GaussExcluder(), secondBoundaryProvider, thirdBoundaryProvider, inserter);
 
-var solutions = 
-    timeDisreditor
-    .SetFirstInitialSolution((p, t) => p.R * t)
-    .SetSecondInitialSolution((p, t) => p.R)
-    .SetFirstConditions(new[] { 0, 0 }, new[] { Bound.Lower, Bound.Left })
-    .SetSolver(solver)
-    .GetSolutions();
+var solutions =
+    timeDiscreditor
+        .SetFirstInitialSolution((p, t) => p.R * t)
+        .SetSecondInitialSolution((p, t) => p.R)
+        .SetSecondConditions
+        (
+            new[] { 0, 0, 0 },
+            new[] { Bound.Left, Bound.Right, Bound.Upper }
+        )
+        //.SetThirdConditions
+        //(
+        //    new[] { 0, 0, 0 },
+        //    new[] { Bound.Left, Bound.Right, Bound.Upper },
+        //    new[] { 1d, 1d, 1d }
+        //)
+        .SetFirstConditions
+        (
+            new[] { 0 },
+            new[] { Bound.Lower }
+        )
+        .SetSolver(solver)
+        .GetSolutions();
 
 Console.WriteLine();

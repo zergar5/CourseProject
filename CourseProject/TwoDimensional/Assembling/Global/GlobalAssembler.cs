@@ -66,13 +66,13 @@ public class GlobalAssembler<TNode>
         return globalMatrix;
     }
 
-    public GlobalVector AssembleRightPart(Grid<TNode> grid, double timeLayer)
+    public GlobalVector AssembleRightPart(Grid<TNode> grid, double time)
     {
         var rightPart = new GlobalVector(grid.Nodes.Length);
 
         foreach (var element in grid)
         {
-            var localRightPart = _localAssembler.AssembleRightSide(element, timeLayer);
+            var localRightPart = _localAssembler.AssembleRightSide(element, time);
 
             _inserter.InsertVector(rightPart, localRightPart);
         }

@@ -40,8 +40,8 @@ public class FourLayer
         var matrixA =
             SymmetricSparseMatrix.Sum
             (
-                delta4 * delta3 / (delta0 * delta1 * delta2) * _sigmaMassMatrix,
-                (2 * delta4 + 2 * delta3) / (delta0 * delta1 * delta2) * _chiMassMatrix
+                delta3 * delta4 / (delta0 * delta1 * delta2) * _sigmaMassMatrix,
+                (2 * delta3 + 2 * delta4) / (delta0 * delta1 * delta2) * _chiMassMatrix
             );
         var q = new GlobalVector(matrixA.CountRows);
         var b =
@@ -54,10 +54,14 @@ public class FourLayer
                     (
                         GlobalVector.Sum
                         (
-                            *threeLayersBackSolution,
-                            *twoLayersBackSolution
+                            (-delta0 * delta3 + (2 * -delta0 + 2 * delta3)) /
+                            (-delta2 * -delta4 * -delta5) * threeLayersBackSolution,
+                            (-delta0 * delta4 + (2 * -delta0 + 2 * delta4)) /
+                            (-delta1 * -delta3 * -delta5) * twoLayersBackSolution
                         ),
-                        * previousSolution
+                        (delta4 * (2 * previousTime + delta1) + -delta0 * -delta3 +
+                         2 * delta4 + 4 * previousTime + 2 * delta1) /
+                        (delta0 * delta1 * delta2) * previousSolution
                     ),
                     _stiffnessMatrix * previousSolution
                 )
