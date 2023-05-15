@@ -22,12 +22,12 @@ var gridBuilder3D = new GridBuilder2D();
 var grid = gridBuilder3D
     .SetRAxis(new AxisSplitParameter(
             new[] { 0d, 1d },
-            new UniformSplitter(1)
+            new UniformSplitter(2)
         )
     )
     .SetZAxis(new AxisSplitParameter(
             new[] { 0d, 1d },
-            new UniformSplitter(1)
+            new UniformSplitter(2)
         )
     )
     .Build();
@@ -76,11 +76,11 @@ var solutions =
     timeDiscreditor
         .SetFirstInitialSolution((p, t) => p.R * t)
         .SetSecondInitialSolution((p, t) => p.R)
-        .SetSecondConditions
-        (
-            new[] { 0, 0, 0 },
-            new[] { Bound.Left, Bound.Right, Bound.Upper }
-        )
+        //.SetSecondConditions
+        //(
+        //    new[] { 0, 0, 0 },
+        //    new[] { Bound.Left, Bound.Right, Bound.Upper }
+        //)
         //.SetThirdConditions
         //(
         //    new[] { 0, 0, 0 },
@@ -89,8 +89,8 @@ var solutions =
         //)
         .SetFirstConditions
         (
-            new[] { 0 },
-            new[] { Bound.Lower }
+            new[] { 0, 0, 1, 1, 2, 2, 3, 3 },
+            new[] { Bound.Lower, Bound.Left, Bound.Lower, Bound.Right, Bound.Left, Bound.Upper, Bound.Upper, Bound.Right }
         )
         .SetSolver(solver)
         .GetSolutions();

@@ -48,24 +48,43 @@ public class FourLayer
             GlobalVector.Sum
             (
                 rightPart,
-                GlobalVector.Subtract
+                GlobalVector.Sum
                 (
                     GlobalVector.Sum
                     (
                         GlobalVector.Sum
                         (
-                            (-delta0 * delta3 + (2 * -delta0 + 2 * delta3)) /
-                            (-delta2 * -delta4 * -delta5) * threeLayersBackSolution,
-                            (-delta0 * delta4 + (2 * -delta0 + 2 * delta4)) /
-                            (-delta1 * -delta3 * -delta5) * twoLayersBackSolution
+                            GlobalVector.Multiply((delta4 * (-delta0 + delta3) + -delta0 * delta3) / (-delta0 * delta1 * delta4), _sigmaMassMatrix * previousSolution),
+                            GlobalVector.Multiply((2 * delta4 + 2 * (-delta0 + delta3)) / (-delta0 * delta1 * delta4), _chiMassMatrix * previousSolution)
                         ),
-                        (delta4 * (2 * previousTime + delta1) + -delta0 * -delta3 +
-                         2 * delta4 + 4 * previousTime + 2 * delta1) /
-                        (delta0 * delta1 * delta2) * previousSolution
+                        GlobalVector.Sum
+                        (
+                            GlobalVector.Multiply(-delta0 * delta4 / (-delta1 * -delta3 * delta5), _sigmaMassMatrix * twoLayersBackSolution),
+                            GlobalVector.Multiply((2 * -delta0 + 2 * delta4) / (-delta1 * -delta3 * delta5), _chiMassMatrix * twoLayersBackSolution)
+                        )
                     ),
-                    _stiffnessMatrix * previousSolution
+                    GlobalVector.Subtract
+                    (
+                        GlobalVector.Sum
+                        (
+                            GlobalVector.Multiply(-delta0 * delta3 / (-delta2 * -delta4 * -delta5), _sigmaMassMatrix * threeLayersBackSolution),
+                            GlobalVector.Multiply((2 * -delta0 + 2 * delta3) / (-delta2 * -delta4 * -delta5), _chiMassMatrix * threeLayersBackSolution)
+                        ),
+                        _stiffnessMatrix * previousSolution
+                    )
                 )
             );
+
+        //GlobalVector.Sum
+        //(
+        //    (-delta0 * delta3 + (2 * -delta0 + 2 * delta3)) /
+        //    (-delta2 * -delta4 * -delta5) * threeLayersBackSolution,
+        //    (-delta0 * delta4 + (2 * -delta0 + 2 * delta4)) /
+        //    (-delta1 * -delta3 * -delta5) * twoLayersBackSolution
+        //),
+        //(delta4 * (2 * previousTime + delta1) + -delta0 * -delta3 +
+        // 2 * delta4 + 4 * previousTime + 2 * delta1) /
+        //(delta0 * delta1 * delta2) * previousSolution
 
         return new Equation<SymmetricSparseMatrix>(matrixA, q, b);
     }

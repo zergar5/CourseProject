@@ -95,7 +95,7 @@ public class TimeDisсreditor
 
         for (var i = 0; i < _grid.Nodes.Length; i++)
         {
-            initialSolution[i] = PreviousSolution[i] + u(_grid.Nodes[i], currentTime - prevTime);
+            initialSolution[i] = PreviousSolution[i] + u(_grid.Nodes[i], prevTime) * (currentTime - prevTime);
         }
 
         TimeSolutions[_currentTimeLayer] = initialSolution;

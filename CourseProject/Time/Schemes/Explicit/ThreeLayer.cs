@@ -49,20 +49,21 @@ public class ThreeLayer
                     (
                         GlobalVector.Sum
                         (
-                            GlobalVector.Multiply(2 / (delta0 * delta2), _chiMassMatrix * previousSolution),
-                            GlobalVector.Multiply(-(delta0 - delta2) / (delta0 * delta2), _sigmaMassMatrix * previousSolution)
+                            GlobalVector.Multiply(-(delta0 - delta2) / (delta0 * delta2), _sigmaMassMatrix * previousSolution),
+                            GlobalVector.Multiply(2 / (delta0 * delta2), _chiMassMatrix * previousSolution)
                         ),
                         GlobalVector.Sum
                         (
-                            GlobalVector.Multiply(-2 / (delta1 * delta2), _chiMassMatrix * twoLayersBackSolution),
-                            GlobalVector.Multiply(delta0 / (delta1 * delta2), _sigmaMassMatrix * twoLayersBackSolution)
+                            GlobalVector.Multiply(delta0 / (delta1 * delta2), _sigmaMassMatrix * twoLayersBackSolution),
+                            GlobalVector.Multiply( -2 / (delta1 * delta2), _chiMassMatrix * twoLayersBackSolution)
                         )
-                        //(delta0 - 2) / (delta1 * delta2) * twoLayersBackSolution,
-                        //(2 - (delta0 - delta2)) / (delta0 * delta2) * previousSolution
                     ),
                     _stiffnessMatrix * previousSolution
                 )
             );
+
+        //(delta0 - 2) / (delta1 * delta2) * twoLayersBackSolution,
+        //(2 - (delta0 - delta2)) / (delta0 * delta2) * previousSolution
 
         return new Equation<SymmetricSparseMatrix>(matrixA, q, b);
     }

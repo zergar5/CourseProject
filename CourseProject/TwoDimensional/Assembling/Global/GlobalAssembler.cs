@@ -10,7 +10,6 @@ public class GlobalAssembler<TNode>
     private readonly IMatrixPortraitBuilder<TNode, SymmetricSparseMatrix> _matrixPortraitBuilder;
     private readonly ILocalAssembler _localAssembler;
     private readonly IInserter<SymmetricSparseMatrix> _inserter;
-    private Equation<SymmetricSparseMatrix> _equation;
 
     public GlobalAssembler
     (
