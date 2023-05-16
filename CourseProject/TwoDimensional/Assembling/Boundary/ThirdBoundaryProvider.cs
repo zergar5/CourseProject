@@ -6,8 +6,6 @@ using CourseProject.Core.GridComponents;
 using CourseProject.Core.Local;
 using CourseProject.FEM.Assembling;
 using CourseProject.TwoDimensional.Parameters;
-using System.Numerics;
-using System.Runtime.Intrinsics;
 
 namespace CourseProject.TwoDimensional.Assembling.Boundary;
 
@@ -22,9 +20,9 @@ public class ThirdBoundaryProvider
 
     public ThirdBoundaryProvider
     (
-        Grid<Node2D> grid, 
-        MaterialFactory materialFactory, 
-        Func<Node2D, double, double> u, 
+        Grid<Node2D> grid,
+        MaterialFactory materialFactory,
+        Func<Node2D, double, double> u,
         DerivativeCalculator derivativeCalculator,
         ITemplateMatrixProvider templateMatrixProviderR,
         ITemplateMatrixProvider templateMatrixProviderZ
@@ -83,7 +81,7 @@ public class ThirdBoundaryProvider
     private BaseMatrix GetRMatrix(int[] indexes, double h, double beta)
     {
         var matrix = beta * h * _grid.Nodes[indexes[0]].R / 6d * _templateMatrixR;
-        
+
         return matrix;
     }
 
@@ -137,12 +135,12 @@ public class ThirdBoundaryProvider
                     ) / beta;
                 break;
             case Bound.Upper:
-                vector[0] = (lambdas[6] * 
+                vector[0] = (lambdas[6] *
                              _derivativeCalculator.Calculate
                              (
                                  _u,
-                                 _grid.Nodes[indexes[0]], 
-                                 time, 
+                                 _grid.Nodes[indexes[0]],
+                                 time,
                                  'z'
                              ) +
                              beta * _u(_grid.Nodes[indexes[0]], time)

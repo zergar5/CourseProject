@@ -1,8 +1,5 @@
 ﻿using CourseProject.Calculus;
-using CourseProject.Core;
 using CourseProject.Core.Global;
-using CourseProject.Core.GridComponents;
-using CourseProject.TwoDimensional.Assembling.Global;
 
 namespace CourseProject.Time.Schemes.Explicit;
 
@@ -13,11 +10,12 @@ public class ThreeLayer
     private readonly SymmetricSparseMatrix _chiMassMatrix;
     private readonly TimeDeltasCalculator _timeDeltasCalculator;
 
-    public ThreeLayer(GlobalAssembler<Node2D> globalAssembler, Grid<Node2D> grid, TimeDeltasCalculator timeDeltasCalculator)
+    public ThreeLayer(SymmetricSparseMatrix stiffnessMatrix, SymmetricSparseMatrix sigmaMassMatrix,
+        SymmetricSparseMatrix chiMassMatrix, TimeDeltasCalculator timeDeltasCalculator)
     {
-        _stiffnessMatrix = globalAssembler.AssembleStiffnessMatrix(grid);
-        _sigmaMassMatrix = globalAssembler.AssembleSigmaMassMatrix(grid);
-        _chiMassMatrix = globalAssembler.AssembleChiMassMatrix(grid);
+        _stiffnessMatrix = stiffnessMatrix;
+        _sigmaMassMatrix = stiffnessMatrix;
+        _chiMassMatrix = chiMassMatrix;
         _timeDeltasCalculator = timeDeltasCalculator;
     }
 
@@ -32,6 +30,7 @@ public class ThreeLayer
     )
     {
         var (delta0, delta1, delta2) = _timeDeltasCalculator.CalculateForThreeLayer(currentTime, previousTime, twoLayersBackTime);
+
         var matrixA =
             SymmetricSparseMatrix.Sum
             (
@@ -49,13 +48,13 @@ public class ThreeLayer
                     (
                         GlobalVector.Sum
                         (
-                            GlobalVector.Multiply(-(delta0 - delta2) / (delta0 * delta2), _sigmaMassMatrix * previousSolution),
+                            GlobalVector.Multiply((-delta0 + delta2) / (delta0 * delta2), _sigmaMassMatrix * previousSolution),
                             GlobalVector.Multiply(2 / (delta0 * delta2), _chiMassMatrix * previousSolution)
                         ),
                         GlobalVector.Sum
                         (
                             GlobalVector.Multiply(delta0 / (delta1 * delta2), _sigmaMassMatrix * twoLayersBackSolution),
-                            GlobalVector.Multiply( -2 / (delta1 * delta2), _chiMassMatrix * twoLayersBackSolution)
+                            GlobalVector.Multiply(-2 / (delta1 * delta2), _chiMassMatrix * twoLayersBackSolution)
                         )
                     ),
                     _stiffnessMatrix * previousSolution

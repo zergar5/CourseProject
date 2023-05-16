@@ -1,5 +1,4 @@
 ﻿using CourseProject.Core.Global;
-using CourseProject.FEM;
 using CourseProject.SLAE.Preconditions.LLT;
 
 namespace CourseProject.SLAE.Solvers;
@@ -60,9 +59,9 @@ public class MCG : ISolver<SymmetricSparseMatrix>
             _r = rNext;
             _z = zNext;
 
-            CourseHolder.GetInfo(i, residual);
+            //CourseHolder.GetInfo(i, residual);
         }
 
-        Console.WriteLine();
+        //Console.WriteLine();
     }
 }

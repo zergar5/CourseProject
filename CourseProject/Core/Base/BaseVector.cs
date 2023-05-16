@@ -1,6 +1,4 @@
-﻿using CourseProject.Core.Local;
-
-namespace CourseProject.Core.Base;
+﻿namespace CourseProject.Core.Base;
 
 public class BaseVector
 {

@@ -8,7 +8,7 @@ public class MatrixZTemplateProvider : ITemplateMatrixProvider
     public BaseMatrix GetMatrix()
     {
         return new BaseMatrix(
-            new [,]
+            new[,]
             {
                 { 1d, 1d },
                 { 1d, 3d }

@@ -1,4 +1,5 @@
-﻿using CourseProject.Core;
+﻿using CourseProject.Calculus;
+using CourseProject.Core;
 using CourseProject.Core.Boundary;
 using CourseProject.Core.Global;
 using CourseProject.Core.GridComponents;
@@ -27,13 +28,13 @@ public class TimeDisсreditor
     private readonly GlobalAssembler<Node2D> _globalAssembler;
     private readonly double[] _timeLayers;
     private readonly Grid<Node2D> _grid;
-    private readonly ThreeLayer _threeLayer;
-    private readonly FourLayer _fourLayer;
     private readonly FirstBoundaryProvider _firstBoundaryProvider;
     private readonly GaussExcluder _gaussExcluder;
     private readonly SecondBoundaryProvider _secondBoundaryProvider;
     private readonly ThirdBoundaryProvider _thirdBoundaryProvider;
     private readonly Inserter _inserter;
+    private ThreeLayer _threeLayer;
+    private FourLayer _fourLayer;
     private int[]? _firstConditionIndexes;
     private Bound[]? _firstConditionBounds;
     private int[]? _secondConditionIndexes;
@@ -48,8 +49,6 @@ public class TimeDisсreditor
         GlobalAssembler<Node2D> globalAssembler,
         double[] timeLayers,
         Grid<Node2D> grid,
-        ThreeLayer threeLayer,
-        FourLayer fourLayer,
         FirstBoundaryProvider firstBoundaryProvider,
         GaussExcluder gaussExcluder,
         SecondBoundaryProvider secondBoundaryProvider,
@@ -61,14 +60,12 @@ public class TimeDisсreditor
         _timeLayers = timeLayers;
         TimeSolutions = new GlobalVector[_timeLayers.Length];
         _grid = grid;
-        _threeLayer = threeLayer;
-        _fourLayer = fourLayer;
         _firstBoundaryProvider = firstBoundaryProvider;
         _gaussExcluder = gaussExcluder;
         _secondBoundaryProvider = secondBoundaryProvider;
         _thirdBoundaryProvider = thirdBoundaryProvider;
         _inserter = inserter;
-        
+
     }
 
     public TimeDisсreditor SetFirstInitialSolution(Func<Node2D, double, double> u)
@@ -96,6 +93,21 @@ public class TimeDisсreditor
         for (var i = 0; i < _grid.Nodes.Length; i++)
         {
             initialSolution[i] = PreviousSolution[i] + u(_grid.Nodes[i], prevTime) * (currentTime - prevTime);
+        }
+
+        TimeSolutions[_currentTimeLayer] = initialSolution;
+        _currentTimeLayer++;
+
+        return this;
+    }
+
+    public TimeDisсreditor SetThirdInitialSolution(Func<Node2D, double, double> u)
+    {
+        var initialSolution = new GlobalVector(_grid.Nodes.Length);
+
+        for (var i = 0; i < _grid.Nodes.Length; i++)
+        {
+            initialSolution[i] = u(_grid.Nodes[i], CurrentTime);
         }
 
         TimeSolutions[_currentTimeLayer] = initialSolution;
@@ -138,33 +150,17 @@ public class TimeDisсreditor
 
     public GlobalVector[] GetSolutions()
     {
-        var equation = UseThreeLayerScheme();
+        var stiffness = _globalAssembler.AssembleStiffnessMatrix(_grid);
+        var sigmaMass = _globalAssembler.AssembleSigmaMassMatrix(_grid);
+        var chiMass = _globalAssembler.AssembleChiMassMatrix(_grid);
+        var timeDeltasCalculator = new TimeDeltasCalculator();
 
-        if (_secondConditionIndexes != null && _secondConditionBounds != null)
-        {
-            var secondConditions = _secondBoundaryProvider.GetConditions(_secondConditionIndexes,
-                _secondConditionBounds, CurrentTime);
-            ApplySecondConditions(equation, secondConditions);
-        }
-        if (_thirdConditionIndexes != null && _thirdConditionBounds != null && _betas != null)
-        {
-            var thirdConditions = _thirdBoundaryProvider.GetConditions(_thirdConditionIndexes,
-                _thirdConditionBounds, _betas, CurrentTime);
-            ApplyThirdConditions(equation, thirdConditions);
-        }
-        if (_firstConditionIndexes != null && _firstConditionBounds != null)
-        {
-            var firstConditions = _firstBoundaryProvider.GetConditions(_firstConditionIndexes,
-                _firstConditionBounds, CurrentTime);
-            ApplyFirstConditions(equation, firstConditions);
-        }
+        _threeLayer = new ThreeLayer(stiffness, sigmaMass, chiMass, timeDeltasCalculator);
+        _fourLayer = new FourLayer(stiffness, sigmaMass, chiMass, timeDeltasCalculator);
 
-        TimeSolutions[_currentTimeLayer] = _solver.Solve(equation);
-        _currentTimeLayer++;
-
-        do
+        while (_currentTimeLayer < _timeLayers.Length)
         {
-            equation = UseFourLayerScheme();
+            var equation = TimeSolutions[2] != null ? UseFourLayerScheme() : UseThreeLayerScheme();
 
             if (_secondConditionIndexes != null && _secondConditionBounds != null)
             {
@@ -188,7 +184,7 @@ public class TimeDisсreditor
             TimeSolutions[_currentTimeLayer] = _solver.Solve(equation);
             _currentTimeLayer++;
 
-        } while (_currentTimeLayer < _timeLayers.Length);
+        }
 
         return TimeSolutions;
     }

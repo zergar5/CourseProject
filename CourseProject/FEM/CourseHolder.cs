@@ -9,13 +9,13 @@ public class CourseHolder
         Console.Write($"Iteration: {iteration}, residual: {residual:E14}                                   \r");
     }
 
-    public static void WriteSolution(Node2D point, double sValue)
+    public static void WriteSolution(Node2D point, double time, double value)
     {
-        Console.WriteLine($"({point.R},{point.Z}) {sValue:E14}");
+        Console.WriteLine($"({point.R},{point.Z}) {time} {value:E14}");
     }
 
     public static void WriteAreaInfo()
     {
-        Console.WriteLine("Point not in area");
+        Console.WriteLine("Point not in area or time interval");
     }
 }

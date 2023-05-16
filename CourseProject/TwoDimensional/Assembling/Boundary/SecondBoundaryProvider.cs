@@ -1,5 +1,4 @@
-﻿using System.Numerics;
-using CourseProject.Calculus;
+﻿using CourseProject.Calculus;
 using CourseProject.Core;
 using CourseProject.Core.Base;
 using CourseProject.Core.Boundary;
@@ -72,7 +71,7 @@ public class SecondBoundaryProvider
             [1] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[1]], time, 'r')
         };
 
-        if(bound == Bound.Left)
+        if (bound == Bound.Left)
         {
             vector[0] *= -lambdas[0];
             vector[1] *= -lambdas[6];
