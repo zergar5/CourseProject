@@ -109,99 +109,50 @@ public class ThirdBoundaryProvider
 
     private BaseVector GetUs(int[] indexes, Bound bound, double[] lambdas, double beta, double time)
     {
-        var vector = new BaseVector(indexes.Length);
-        switch (bound)
+        BaseVector vector;
+
+        if (bound is Bound.Left or Bound.Right)
         {
-            case Bound.Lower:
-                vector[0] = (lambdas[0] *
-                             -_derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[0]],
-                                 time,
-                                 'z'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[0]], time)
-                    ) / beta;
-                vector[1] = (lambdas[2] *
-                             -_derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[1]],
-                                 time,
-                                 'z'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[1]], time)
-                    ) / beta;
-                break;
-            case Bound.Upper:
-                vector[0] = (lambdas[6] *
-                             _derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[0]],
-                                 time,
-                                 'z'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[0]], time)
-                    ) / beta;
-                vector[1] = (lambdas[8] *
-                             _derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[1]],
-                                 time,
-                                 'z'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[1]], time)
-                    ) / beta;
-                break;
-            case Bound.Left:
-                vector[0] = (lambdas[0] *
-                             -_derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[0]],
-                                 time,
-                                 'r'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[0]], time)
-                    ) / beta;
-                vector[1] = (lambdas[6] *
-                             -_derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[1]],
-                                 time,
-                                 'r'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[1]], time)
-                    ) / beta;
-                break;
-            case Bound.Right:
-                vector[0] = (lambdas[2] *
-                             _derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[0]],
-                                 time,
-                                 'r'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[0]], time)
-                    ) / beta;
-                vector[1] = (lambdas[8] *
-                             _derivativeCalculator.Calculate
-                             (
-                                 _u,
-                                 _grid.Nodes[indexes[1]],
-                                 time,
-                                 'r'
-                             ) +
-                             beta * _u(_grid.Nodes[indexes[1]], time)
-                    ) / beta;
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(bound), bound, null);
+            vector = new BaseVector(indexes.Length)
+            {
+                [0] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[0]], time, 'z'),
+                [1] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[1]], time, 'z')
+            };
+
+            if (bound == Bound.Left)
+            {
+                vector[0] *= -lambdas[0];
+                vector[1] *= -lambdas[6];
+            }
+            else
+            {
+                vector[0] *= lambdas[2];
+                vector[1] *= lambdas[8];
+            }
+        }
+        else
+        {
+            vector = new BaseVector(indexes.Length)
+            {
+                [0] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[0]], time, 'r'),
+                [1] = _derivativeCalculator.Calculate(_u, _grid.Nodes[indexes[1]], time, 'r')
+            };
+
+            if (bound == Bound.Lower)
+            {
+                vector[0] *= -lambdas[0];
+                vector[1] *= -lambdas[2];
+            }
+            else
+            {
+                vector[0] *= lambdas[6];
+                vector[1] *= lambdas[8];
+            }
+        }
+
+        for (var i = 0; i < vector.Count; i++)
+        {
+            vector[i] = (vector[i] + beta * _u(_grid.Nodes[indexes[i]], time)) / beta;
         }
 
         return vector;

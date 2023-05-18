@@ -22,12 +22,12 @@ var gridBuilder3D = new GridBuilder2D();
 var grid = gridBuilder3D
     .SetRAxis(new AxisSplitParameter(
             new[] { 1d, 3d },
-            new UniformSplitter(1)
+            new UniformSplitter(2)
         )
     )
     .SetZAxis(new AxisSplitParameter(
             new[] { 1d, 3d },
-            new UniformSplitter(1)
+            new UniformSplitter(2)
         )
     )
     .Build();
@@ -39,10 +39,10 @@ var materialFactory = new MaterialFactory
     new List<double> { 1d }
 );
 
-var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, new LinearFunctionsProvider(), materialFactory);
+var localBasisFunctionsProvider = new LocalBasisFunctionsProvider(grid, new LinearFunctionsProvider());
 var lambdaInterpolateProvider = new LambdaInterpolateProvider(localBasisFunctionsProvider, materialFactory);
 
-var f = new RightPartParameter((p, t) => -t / p.R, grid);
+var f = new RightPartParameter((p, t) => -1 / p.R - Math.Exp(t), grid);
 
 var derivativeCalculator = new DerivativeCalculator();
 
@@ -55,13 +55,15 @@ var globalAssembler = new GlobalAssembler<Node2D>(new MatrixPortraitBuilder(), l
 var templateRProvider = new MatrixRTemplateProvider();
 var templateZProvider = new MatrixZTemplateProvider();
 
-var timeLayers = new UniformSplitter(3)
-    .EnumerateValues(new Interval(1, 1 + 4e-14))
+var timeLayers = new UniformSplitter(120)
+    .EnumerateValues(new Interval(10, 10 + 3e-9))
     .ToArray();
 
-var firstBoundaryProvider = new FirstBoundaryProvider(grid, (p, t) => p.R * t);
-var secondBoundaryProvider = new SecondBoundaryProvider(grid, materialFactory, (p, t) => p.R * t, derivativeCalculator, templateRProvider, templateZProvider);
-var thirdBoundaryProvider = new ThirdBoundaryProvider(grid, materialFactory, (p, t) => p.R * t, derivativeCalculator, templateRProvider, templateZProvider);
+Func<Node2D, double, double> u = (p, t) => p.R + p.Z - Math.Exp(t);
+
+var firstBoundaryProvider = new FirstBoundaryProvider(grid, u);
+var secondBoundaryProvider = new SecondBoundaryProvider(grid, materialFactory, u, derivativeCalculator, templateRProvider, templateZProvider);
+var thirdBoundaryProvider = new ThirdBoundaryProvider(grid, materialFactory, u, derivativeCalculator, templateRProvider, templateZProvider);
 
 var lltPreconditioner = new LLTPreconditioner();
 var solver = new MCG(lltPreconditioner, new LLTSparse(lltPreconditioner));
@@ -71,34 +73,34 @@ var timeDiscreditor = new TimeDisсreditor(globalAssembler, timeLayers, grid, fi
 
 var solutions =
     timeDiscreditor
-        .SetFirstInitialSolution((p, t) => p.R * t)
-        .SetSecondInitialSolution((p, t) => p.R)
-        .SetThirdInitialSolution((p, t) => p.R * t)
-        .SetSecondConditions
-        (
-            new[] { 0, 0, 0 },
-            new[] { Bound.Left, Bound.Right, Bound.Upper }
-        )
+        .SetFirstInitialSolution(u)
+        .SetSecondInitialSolution((p, t) => -Math.Exp(t))
+        .SetThirdInitialSolution(u)
+        //.SetSecondConditions
+        //(
+        //    new[] { 0, 0, 0 },
+        //    new[] { Bound.Left, Bound.Right, Bound.Upper }
+        //)
         //.SetThirdConditions
         //(
         //    new[] { 0, 0, 0 },
         //    new[] { Bound.Left, Bound.Right, Bound.Upper },
         //    new[] { 1d, 1d, 1d }
         //)
-        //.SetFirstConditions
-        //(
-        //    new[] { 0, 0, 1, 1, 2, 2, 3, 3 },
-        //    new[] { Bound.Lower, Bound.Left, Bound.Lower, Bound.Right, Bound.Left, Bound.Upper, Bound.Upper, Bound.Right }
-        //)
         .SetFirstConditions
         (
-            new[] { 0 },
-            new[] { Bound.Lower }
+            new[] { 0, 0, 1, 1, 2, 2, 3, 3 },
+            new[] { Bound.Lower, Bound.Left, Bound.Lower, Bound.Right, Bound.Left, Bound.Upper, Bound.Upper, Bound.Right }
         )
+        //.SetFirstConditions
+        //(
+        //    new[] { 0 },
+        //    new[] { Bound.Lower }
+        //)
         .SetSolver(solver)
         .GetSolutions();
 
 var femSolution = new FEMSolution(grid, solutions, timeLayers, localBasisFunctionsProvider);
-femSolution.Calculate(new Node2D(2d, 2d), 1 + 2.2e-14);
+var result = femSolution.Calculate(new Node2D(1.5d, 1.5d), 10 + 3e-9);
 
-Console.WriteLine();
+Console.WriteLine(Math.Abs(u(new Node2D(1.5d, 1.5d), 10 + 3e-9) - result));

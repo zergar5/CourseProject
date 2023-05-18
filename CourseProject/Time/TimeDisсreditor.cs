@@ -1,5 +1,4 @@
-﻿using CourseProject.Calculus;
-using CourseProject.Core;
+﻿using CourseProject.Core;
 using CourseProject.Core.Boundary;
 using CourseProject.Core.Global;
 using CourseProject.Core.GridComponents;

@@ -1,4 +1,4 @@
-﻿namespace CourseProject.Calculus;
+﻿namespace CourseProject.Time;
 
 public class TimeDeltasCalculator
 {

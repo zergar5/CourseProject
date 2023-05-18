@@ -1,7 +1,6 @@
 ﻿using CourseProject.Core;
 using CourseProject.Core.GridComponents;
 using CourseProject.FEM;
-using CourseProject.TwoDimensional.Parameters;
 
 namespace CourseProject.TwoDimensional.Assembling.Local;
 
@@ -10,7 +9,7 @@ public class LocalBasisFunctionsProvider
     private readonly Grid<Node2D> _grid;
     private readonly LinearFunctionsProvider _linearFunctionsProvider;
 
-    public LocalBasisFunctionsProvider(Grid<Node2D> grid, LinearFunctionsProvider linearFunctionsProvider, MaterialFactory materialFactory)
+    public LocalBasisFunctionsProvider(Grid<Node2D> grid, LinearFunctionsProvider linearFunctionsProvider)
     {
         _grid = grid;
         _linearFunctionsProvider = linearFunctionsProvider;
